@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "memoria-app",
+    "slug": "memoria-app",
+    "version": "0.1.0",
+    "sdkVersion": "52.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "android": {
+      "package": "com.tfg.memoriaapp",
+      "googleServicesFile": "./android/app/google-services.json"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d906b2f0-99ee-4778-8f73-4d90eeed8dbb"
+      }
+    }
+  }
+}
