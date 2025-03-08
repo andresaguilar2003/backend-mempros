@@ -13,7 +13,6 @@ export default function AddTaskScreen({ route }) {
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
-    const [repeat, setRepeat] = useState('none');
     const [importance, setImportance] = useState('medio');
     const [status, setStatus] = useState('todo');
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -36,7 +35,6 @@ export default function AddTaskScreen({ route }) {
             description,
             date: date.toISOString(),
             time: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            repeat,
             importance,
             status,
             userId: user ? user._id : null, 
@@ -62,7 +60,6 @@ export default function AddTaskScreen({ route }) {
             setDescription('');
             setDate(new Date());
             setTime(new Date());
-            setRepeat('none');
             setImportance('medio');
             setStatus('todo');
 
@@ -132,18 +129,6 @@ export default function AddTaskScreen({ route }) {
                     }}
                 />
             )}
-
-            <Text style={styles.label}>Repetir:</Text>
-            <Picker
-                selectedValue={repeat}
-                onValueChange={(itemValue) => setRepeat(itemValue)}
-                style={styles.picker}
-            >
-                <Picker.Item label="No repetir" value="none" />
-                <Picker.Item label="Diario" value="daily" />
-                <Picker.Item label="Semanal" value="weekly" />
-                <Picker.Item label="Mensual" value="monthly" />
-            </Picker>
 
             <Text style={styles.label}>Importancia:</Text>
             <Picker

@@ -6,7 +6,7 @@ const router = express.Router();
 // 🔹 Crear una tarea (Protegido)
 router.post("/", authMiddleware, async (req, res) => {
     try {
-        const { title, description, date, time, repeat, importance, status } = req.body;
+        const { title, description, date, time, importance, status } = req.body;
 
         if (!title || !date || !time) {
             return res.status(400).json({ error: "El título, la fecha y la hora son obligatorios" });
@@ -17,7 +17,6 @@ router.post("/", authMiddleware, async (req, res) => {
             description,
             date,
             time,
-            repeat,
             importance,
             status,
             userId: req.user.userId,

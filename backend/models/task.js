@@ -5,7 +5,6 @@ const TaskSchema = new mongoose.Schema({
     description: { type: String },
     date: { type: Date, required: true },  // 👈 Fecha de la tarea
     time: { type: String, required: true },  // 👈 Hora de la tarea (HH:MM)
-    repeat: { type: String, enum: ["none", "daily", "weekly", "monthly"], default: "none" },
     importance: { type: String, enum: ["poco", "medio", "mucho"], default: "medio" },
     status: { type: String, enum: ["todo", "inProgress", "done", "postponed"], default: "todo" },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true } // 🔹 Usuario que creó la tarea
