@@ -13,8 +13,11 @@ const sendPushNotification = async (deviceToken, message) => {
   const notification = {
     to: deviceToken,
     sound: 'default',
-    title: 'Tareas del día',
-    body: message,
+    title: '📅 Tareas del día', // Título de la notificación
+    body: message, // Cuerpo de la notificación
+    data: { // Datos adicionales (opcional)
+      type: 'daily_tasks',
+    },
   };
 
   try {
