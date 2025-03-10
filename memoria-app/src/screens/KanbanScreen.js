@@ -1,5 +1,5 @@
-import React, { useState, useEffect,useContext } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { AuthContext } from "../context/AuthContext";
 
@@ -11,6 +11,7 @@ const STATUS_TYPES = {
 
 const KanbanScreen = () => {
   const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const KanbanScreen = () => {
     try {
       const response = await fetch("http://192.168.1.19:5000/api/tasks", {
         headers: {
-          "Authorization": `Bearer ${token}`, // Incluye el token en el encabezado
+          "Authorization": `Bearer ${token}`,
         },
       });
 
@@ -40,21 +41,22 @@ const KanbanScreen = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // Envía el token en el encabezado
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ status: newStatus }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al actualizar la tarea");
       }
-  
+
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task._id === taskId ? { ...task, status: newStatus } : task
         )
       );
+      setSelectedTask(null);
     } catch (error) {
       console.error("Error al actualizar el estado:", error);
     }
@@ -73,7 +75,7 @@ const KanbanScreen = () => {
             <TouchableOpacity
               style={[styles.task, isActive && styles.activeTask]}
               onLongPress={drag}
-              onPress={() => updateTaskStatus(item._id, getNextStatus(status))}
+              onPress={() => setSelectedTask(item)}
             >
               <Text style={styles.taskTitle}>{item.title}</Text>
               <Text style={styles.taskDescription}>{item.description}</Text>
@@ -83,24 +85,10 @@ const KanbanScreen = () => {
               <Text style={styles.taskImportance}>🔥 {item.importance}</Text>
             </TouchableOpacity>
           )}
-          onDragEnd={({ data, from, to }) => {
-            if (from !== to) {
-              const updatedTask = data[to];
-              const newStatus = Object.keys(STATUS_TYPES)[to]; // Obtén el nuevo estado basado en la columna
-              updateTaskStatus(updatedTask._id, newStatus);
-            }
-            setTasks(data);
-          }}
+          onDragEnd={({ data }) => setTasks(data)}
         />
       </View>
     );
-  };
-
-  const getNextStatus = (currentStatus) => {
-    const statusOrder = ["todo", "done", "postponed"];
-    const currentIndex = statusOrder.indexOf(currentStatus);
-    const nextIndex = (currentIndex + 1) % statusOrder.length;
-    return statusOrder[nextIndex];
   };
 
   return (
@@ -112,6 +100,40 @@ const KanbanScreen = () => {
           </View>
         ))}
       </View>
+
+      {/* Modal para cambiar estado */}
+      {selectedTask && (
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={!!selectedTask}
+          onRequestClose={() => setSelectedTask(null)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Cambiar estado</Text>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => updateTaskStatus(selectedTask._id, "done")}
+              >
+                <Text style={styles.modalButtonText}>✅ Hecha</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => updateTaskStatus(selectedTask._id, "postponed")}
+              >
+                <Text style={styles.modalButtonText}>⏳ Postpuesta</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setSelectedTask(null)}
+              >
+                <Text style={styles.modalButtonText}>❌ Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -120,27 +142,16 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f4f4f4", padding: 10 },
   kanbanContainer: { flexDirection: "row", justifyContent: "space-around" },
   columnContainer: { flex: 1, marginHorizontal: 5 },
-  column: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
+  column: { backgroundColor: "#ffffff", borderRadius: 10, padding: 10 },
   columnTitle: { fontSize: 18, fontWeight: "bold", textAlign: "center", marginBottom: 5 },
-  task: {
-    backgroundColor: "#ffeb99",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 5,
-  },
+  task: { backgroundColor: "#ffeb99", padding: 10, marginVertical: 5, borderRadius: 5 },
   activeTask: { backgroundColor: "#ffcc00" },
-  taskTitle: { fontSize: 16, fontWeight: "bold" },
-  taskDescription: { fontSize: 14, color: "#555" },
-  taskDate: { fontSize: 12, color: "#777", marginTop: 5 },
-  taskImportance: { fontSize: 12, color: "#777", marginTop: 2 },
+  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
+  modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 10, width: 300, alignItems: "center" },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  modalButton: { backgroundColor: "#007bff", padding: 10, marginVertical: 5, borderRadius: 5, width: "80%", alignItems: "center" },
+  cancelButton: { backgroundColor: "#dc3545", padding: 10, marginTop: 10, borderRadius: 5, width: "80%", alignItems: "center" },
+  modalButtonText: { color: "white", fontWeight: "bold" },
 });
 
 export default KanbanScreen;
