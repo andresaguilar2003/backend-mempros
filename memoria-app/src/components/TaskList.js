@@ -5,12 +5,13 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext"; 
+import { useTheme } from "../context/ThemeContext";
 
 export default function TaskList({ userId }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showRotateMessage, setShowRotateMessage] = useState(false); // Estado para controlar el mensaje
+    const [sortBy, setSortBy] = useState("date"); // Estado para el criterio de orden
+    const [showRotateMessage, setShowRotateMessage] = useState(false);
     const navigation = useNavigation();
     const { token } = useContext(AuthContext);
     const { theme } = useTheme();
@@ -54,6 +55,18 @@ export default function TaskList({ userId }) {
         }
     };
 
+    const sortTasks = (tasks, criteria) => {
+        return [...tasks].sort((a, b) => {
+            if (criteria === "date") {
+                return new Date(a.date) - new Date(b.date); // Ordenar por fecha ascendente
+            } else if (criteria === "importance") {
+                const importanceOrder = { "mucho": 3, "medio": 2, "poco": 1 }; // Mapear importancia a valores numéricos
+                return importanceOrder[b.importance] - importanceOrder[a.importance]; // Ordenar por importancia descendente
+            }
+            return 0;
+        });
+    };
+
     const deleteTask = async (taskId) => {
         Alert.alert(
             "Eliminar tarea",
@@ -95,6 +108,9 @@ export default function TaskList({ userId }) {
         }, 3000);
     };
 
+    // Ordenar las tareas según el criterio seleccionado
+    const sortedTasks = sortTasks(tasks, sortBy);
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -104,7 +120,7 @@ export default function TaskList({ userId }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.navButton}
-                    onPress={handleKanbanPress} // Usa la nueva función
+                    onPress={handleKanbanPress}
                 >
                     <Text style={styles.navButtonText}>📌 Estado de las tareas</Text>
                 </TouchableOpacity>
@@ -117,6 +133,23 @@ export default function TaskList({ userId }) {
                 </TouchableOpacity>
             </View>
 
+            {/* 📌 Botones de filtro */}
+            <View style={styles.filterContainer}>
+                <TouchableOpacity
+                    style={[styles.filterButton, sortBy === "date" && styles.activeFilter]}
+                    onPress={() => setSortBy("date")}
+                >
+                    <Text style={styles.filterButtonText}>📆 Más Cercanas</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.filterButton, sortBy === "importance" && styles.activeFilter]}
+                    onPress={() => setSortBy("importance")}
+                >
+                    <Text style={styles.filterButtonText}>🔥 Importancia</Text>
+                </TouchableOpacity>
+            </View>
+
             {/* Modal para el mensaje de rotación */}
             <Modal
                 visible={showRotateMessage}
@@ -126,7 +159,7 @@ export default function TaskList({ userId }) {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Image
-                            source={require("../assests/rotate-device.gif")} // Asegúrate de tener un GIF en tu proyecto
+                            source={require("../assests/rotate-device.gif")}
                             style={styles.gif}
                         />
                         <Text style={styles.modalText}>
@@ -140,13 +173,14 @@ export default function TaskList({ userId }) {
                 <ActivityIndicator size="large" color="#007bff" />
             ) : (
                 <FlatList
-                    data={tasks}
+                    data={sortedTasks} // Usar las tareas ordenadas
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                         <View style={styles.taskItem}>
                             <Text style={styles.title}>{item.title}</Text>
                             <Text>{item.description}</Text>
                             <Text style={styles.date}>📅 {item.date}</Text>
+                            <Text style={styles.importance}>🔥 {item.importance}</Text>
 
                             <TouchableOpacity
                                 style={styles.deleteButton}
@@ -187,6 +221,31 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    // Estilos para los botones de filtro
+    filterContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 15,
+    },
+    filterButton: {
+        flex: 1,
+        backgroundColor: "#f0f0f0", // Fondo gris claro por defecto
+        padding: 12,
+        borderRadius: 8,
+        alignItems: "center",
+        marginHorizontal: 5,
+        borderWidth: 1, // Borde para resaltar
+        borderColor: "#ccc", // Color del borde
+    },
+    activeFilter: {
+        backgroundColor: "#d0d0d0", // Fondo gris más oscuro cuando está activo
+        borderColor: "#007bff", // Borde azul para resaltar el filtro activo
+    },
+    filterButtonText: {
+        color: "#333", // Texto oscuro para mejor contraste
+        fontSize: 14,
+        fontWeight: "bold",
+    },
     taskItem: {
         padding: 15,
         marginVertical: 8,
@@ -205,6 +264,11 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 12,
         color: "#666",
+        marginTop: 5,
+    },
+    importance: {
+        fontSize: 12,
+        fontWeight: "bold",
         marginTop: 5,
     },
     deleteButton: {
