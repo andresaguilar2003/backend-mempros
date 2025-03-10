@@ -5,7 +5,6 @@ import { AuthContext } from "../context/AuthContext";
 
 const STATUS_TYPES = {
   todo: "📌 Por hacer",
-  inProgress: "⚙️ En curso",
   done: "✅ Hecha",
   postponed: "⏳ Postpuesta",
 };
@@ -41,13 +40,16 @@ const KanbanScreen = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // Incluye el token en el encabezado
+          "Authorization": `Bearer ${token}`, // Envía el token en el encabezado
         },
         body: JSON.stringify({ status: newStatus }),
       });
-
-      if (!response.ok) throw new Error("Error al actualizar la tarea");
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al actualizar la tarea");
+      }
+  
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task._id === taskId ? { ...task, status: newStatus } : task
@@ -84,7 +86,8 @@ const KanbanScreen = () => {
           onDragEnd={({ data, from, to }) => {
             if (from !== to) {
               const updatedTask = data[to];
-              updateTaskStatus(updatedTask._id, getNextStatus(updatedTask.status));
+              const newStatus = Object.keys(STATUS_TYPES)[to]; // Obtén el nuevo estado basado en la columna
+              updateTaskStatus(updatedTask._id, newStatus);
             }
             setTasks(data);
           }}
@@ -94,7 +97,7 @@ const KanbanScreen = () => {
   };
 
   const getNextStatus = (currentStatus) => {
-    const statusOrder = ["todo", "inProgress", "done", "postponed"];
+    const statusOrder = ["todo", "done", "postponed"];
     const currentIndex = statusOrder.indexOf(currentStatus);
     const nextIndex = (currentIndex + 1) % statusOrder.length;
     return statusOrder[nextIndex];

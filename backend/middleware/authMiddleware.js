@@ -15,7 +15,9 @@ module.exports = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         console.log("✅ Token válido. Usuario autenticado:", decoded);
-        req.user = decoded; // Guardamos los datos del usuario en la request
+
+        // Asegúrate de que el ID del usuario esté disponible en req.user
+        req.user = { userId: decoded.userId }; // Aquí asignamos el userId
         next();
     } catch (error) {
         console.log("⚠️ Token inválido:", error.message);

@@ -1,3 +1,4 @@
+// routes/taskRoutes.js
 const express = require("express");
 const Task = require("../models/task");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -19,12 +20,10 @@ router.post("/", authMiddleware, async (req, res) => {
             time,
             importance,
             status,
-            userId: req.user.userId,
+            userId: req.user.userId, // Usamos req.user.userId
         });
 
         await newTask.save();
-
-
         res.status(201).json(newTask);
     } catch (error) {
         console.error("Error al guardar la tarea:", error.message);
@@ -36,7 +35,7 @@ router.post("/", authMiddleware, async (req, res) => {
 router.get("/", authMiddleware, async (req, res) => {
     try {
         console.log("🔎 Buscando tareas del usuario:", req.user.userId);
-        const tasks = await Task.find({ userId: req.user.userId });
+        const tasks = await Task.find({ userId: req.user.userId }); // Usamos req.user.userId
 
         console.log(`✅ ${tasks.length} tareas encontradas.`);
         res.json(tasks);
@@ -49,24 +48,25 @@ router.get("/", authMiddleware, async (req, res) => {
 // 🔹 Actualizar el estado de una tarea (Protegido)
 router.put("/:id", authMiddleware, async (req, res) => {
     try {
-        console.log("🔄 Actualizando tarea:", req.params.id, "Usuario:", req.user.id);
+        console.log("🔄 Actualizando tarea:", req.params.id, "Usuario:", req.user.userId);
         const { status } = req.body;
+
         const updatedTask = await Task.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user.id },
+            { _id: req.params.id, userId: req.user.userId }, // Usamos req.user.userId
             { status },
             { new: true }
         );
 
         if (!updatedTask) {
             console.log("⚠️ Tarea no encontrada o no pertenece al usuario.");
-            return res.status(404).json({ message: "Tarea no encontrada" });
+            return res.status(404).json({ error: "Tarea no encontrada o no tienes permisos" });
         }
 
         console.log("✅ Tarea actualizada:", updatedTask);
         res.json(updatedTask);
     } catch (error) {
         console.error("❌ Error al actualizar la tarea:", error.message);
-        res.status(500).json({ error: "Error al actualizar la tarea" });
+        res.status(500).json({ error: "Error al actualizar la tarea", details: error.message });
     }
 });
 
@@ -74,18 +74,18 @@ router.put("/:id", authMiddleware, async (req, res) => {
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         console.log("🗑️ Eliminando tarea:", req.params.id, "Usuario:", req.user.userId);
-        const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+        const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user.userId }); // Usamos req.user.userId
 
         if (!task) {
             console.log("⚠️ Tarea no encontrada o no pertenece al usuario.");
-            return res.status(404).json({ message: "Tarea no encontrada" });
+            return res.status(404).json({ error: "Tarea no encontrada o no tienes permisos" });
         }
 
         console.log("✅ Tarea eliminada correctamente.");
         res.json({ message: "Tarea eliminada correctamente" });
     } catch (error) {
         console.error("❌ Error al eliminar la tarea:", error.message);
-        res.status(500).json({ message: "Error al eliminar la tarea" });
+        res.status(500).json({ error: "Error al eliminar la tarea", details: error.message });
     }
 });
 

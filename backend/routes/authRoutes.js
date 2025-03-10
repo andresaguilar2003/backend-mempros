@@ -1,4 +1,3 @@
-// routes/authRoutes.js
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -20,6 +19,7 @@ router.post("/register", async (req, res) => {
         const newUser = new User({ name, email, password: hashedPassword, fcmToken });
         await newUser.save();
 
+        // Generar el token JWT con el ID del usuario
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         res.status(201).json({ user: { _id: newUser._id, name, email }, token });
@@ -50,6 +50,7 @@ router.post("/login", async (req, res) => {
             await user.save();
         }
 
+        // Generar el token JWT con el ID del usuario
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.json({ user: { _id: user._id, name: user.name, email }, token });
     } catch (error) {

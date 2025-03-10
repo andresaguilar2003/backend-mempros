@@ -11,13 +11,13 @@ export default function HomeScreen() {
     
     return (
         <View style={[styles.container, theme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-            {/* 🔴 Botón para cerrar sesión */}
+            {/* ✓ Botón mejorado para cerrar sesión */}
             <TouchableOpacity 
-                style={styles.logoutButton} 
+                style={[styles.logoutButton, theme === 'dark' ? styles.logoutButtonDark : styles.logoutButtonLight]} 
                 onPress={logout}
             >
-                <Text style={[styles.logoutButtonText, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                    🚪 Cerrar sesión
+                <Text style={styles.logoutButtonText}>
+                    <Text style={styles.logoutIcon}>✕</Text> Cerrar Sesión
                 </Text>
             </TouchableOpacity>
 
@@ -90,19 +90,41 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 20,
         left: 20,
-        backgroundColor: "#dc3545",
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 8,
         alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "center",
+        borderWidth: 1,
+        minWidth: 120,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 3,
     },
     logoutButtonText: {
         fontSize: 14,
+        fontWeight: "600",
+        color: "#dc3545",
+    },
+    logoutIcon: {
+        fontSize: 14,
+        marginRight: 5,
         fontWeight: "bold",
     },
     buttonText: {
         color: "white",
         fontSize: 18,
         fontWeight: "bold",
+    },
+    logoutButtonLight: {
+        backgroundColor: "white",
+        borderColor: "#dc3545",
+    },
+    logoutButtonDark: {
+        backgroundColor: "white",
+        borderColor: "#dc3545",
     },
     // 🌙☀ Estilos del botón de cambio de tema
     themeButton: {

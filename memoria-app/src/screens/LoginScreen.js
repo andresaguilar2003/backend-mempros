@@ -55,7 +55,6 @@ export default function LoginScreen() {
 
                 // Guardar usuario en contexto y redirigir
                 login(data.token, data.user);
-                Alert.alert("Éxito", "Inicio de sesión exitoso");
                 navigation.replace("Inicio");
             } catch (jsonError) {
                 Alert.alert("Error", "La respuesta del servidor no es válida.");

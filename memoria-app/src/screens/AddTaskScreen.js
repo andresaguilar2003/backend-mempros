@@ -21,7 +21,7 @@ export default function AddTaskScreen({ route }) {
     const navigation = useNavigation();
 
     const handleAddTask = async () => {
-        if (!title.trim() || !description.trim()) {
+        if (!title.trim()) {
             Alert.alert('Error', 'Por favor, completa todos los campos');
             return;
         }
@@ -139,18 +139,6 @@ export default function AddTaskScreen({ route }) {
                 <Picker.Item label="🔥 Poco" value="poco" />
                 <Picker.Item label="🔥🔥 Medio" value="medio" />
                 <Picker.Item label="🔥🔥🔥 Mucho" value="mucho" />
-            </Picker>
-
-            <Text style={styles.label}>Estado:</Text>
-            <Picker
-                selectedValue={status}
-                onValueChange={(itemValue) => setStatus(itemValue)}
-                style={styles.picker}
-            >
-                <Picker.Item label="📌 Por hacer" value="todo" />
-                <Picker.Item label="⚙️ En curso" value="inProgress" />
-                <Picker.Item label="✅ Hecha" value="done" />
-                <Picker.Item label="⏳ Postpuesta" value="postponed" />
             </Picker>
 
             <TouchableOpacity style={styles.button} onPress={handleAddTask}>
