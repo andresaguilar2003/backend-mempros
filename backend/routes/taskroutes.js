@@ -45,15 +45,15 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// 🔹 Actualizar el estado de una tarea (Protegido)
+// 🔹 Actualizar una tarea (fecha, hora o estado)
 router.put("/:id", authMiddleware, async (req, res) => {
     try {
         console.log("🔄 Actualizando tarea:", req.params.id, "Usuario:", req.user.userId);
-        const { status } = req.body;
+        const { status, date, time } = req.body; // Asegurar que date y time se capturan correctamente
 
         const updatedTask = await Task.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user.userId }, // Usamos req.user.userId
-            { status },
+            { _id: req.params.id, userId: req.user.userId },
+            { status, ...(date && { date }), ...(time && { time }) }, // Solo actualiza si los valores existen
             { new: true }
         );
 
@@ -69,6 +69,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Error al actualizar la tarea", details: error.message });
     }
 });
+
 
 // 🔹 Eliminar una tarea (Protegido)
 router.delete("/:id", authMiddleware, async (req, res) => {
