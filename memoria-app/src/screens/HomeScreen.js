@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useTheme } from '../context/ThemeContext';
 import AssistantButton from '../components/AssistantButton';
 import VirtualAssistant from '../components/VirtualAssistant';
+import AchievementsButton from '../components/AchievementsButton';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
@@ -55,6 +56,9 @@ export default function HomeScreen() {
                 <Text style={styles.buttonText}>➕ Nueva tarea</Text>
             </TouchableOpacity>
             
+            <AchievementsButton onPress={() => navigation.navigate('Logros')} />
+
+
             {/* Botón del asistente */}
             <AssistantButton onPress={() => setShowAssistant(true)} />
             

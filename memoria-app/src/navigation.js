@@ -9,6 +9,7 @@ import KanbanScreen from "./screens/KanbanScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import AchievementsScreen from './screens/AchievementsScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ function AppNavigator() {
           <Stack.Screen name="Inicio" component={HomeScreen} />
           <Stack.Screen name="Tareas" component={TaskScreen} />
           <Stack.Screen name="AddTask" component={AddTaskScreen} />
+          <Stack.Screen name="Logros" component={AchievementsScreen} />
           <Stack.Screen name="KanbanScreen" component={KanbanScreen} options={{ title: "Tablero Kanban" }} />
           <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ title: "Calendario" }} />
         </>
