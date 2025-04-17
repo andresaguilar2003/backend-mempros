@@ -13,12 +13,6 @@ const VirtualAssistant = ({ onClose }) => {
     view: "Para ver tus tareas, simplemente dale al boton de 'Ver mis Tareas', alli podras ver todas las tareas que tienes, incluso podrás seleccionar la vista de calendario y la vista de Kanban"
   };
 
-  // Efecto para cargar la animación inicial
-  useEffect(() => {
-    animationRef.current?.play(); // reproduce desde el inicio al final
-    return () => animationRef.current?.reset();
-  }, []);
-  
 
   const showOptions = () => {
     Animated.timing(fadeAnim, {
@@ -52,13 +46,13 @@ const VirtualAssistant = ({ onClose }) => {
           {/* Reemplazamos la Image por LottieView */}
           <View style={styles.animationContainer}>
             <LottieView
-              ref={animationRef}
-              source={require('../assests/lottie/asistente1.json')}
-              autoPlay={false}
-              loop={false}
-              style={styles.animation}
-              resizeMode="contain"
-            />
+                ref={animationRef}
+                source={require('../assests/lottie/asistente1.json')}
+                autoPlay={true}
+                loop={true}
+                style={styles.animation}
+                resizeMode="contain"
+                />
           </View>
           
           {/* Burbuja de diálogo */}
