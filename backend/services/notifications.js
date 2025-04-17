@@ -2,8 +2,8 @@ const cron = require('node-cron');
 const Task = require('../models/task'); // Importa el modelo Task
 const { sendPushNotification } = require('../services/notificationService'); // Función para enviar notificaciones
 
-// Programar la tarea para que se ejecute todos los días a las 8:00 AM
-cron.schedule('* * * * *', async () => {
+// Función para enviar notificaciones diarias a las 8:00 AM
+const sendDailyNotifications = async () => {
     try {
         // Obtener la fecha actual
         const today = new Date();
@@ -12,8 +12,8 @@ cron.schedule('* * * * *', async () => {
 
         // Buscar tareas para el día actual
         const tasks = await Task.find({
-            date: { $gte: startOfDay, $lte: endOfDay } // Cambia `dueDate` a `date`
-        }).populate('userId', 'fcmToken'); // Cambia `user` a `userId` y asegúrate de que el campo sea `fcmToken`
+            date: { $gte: startOfDay, $lte: endOfDay }
+        }).populate('userId', 'fcmToken');
 
         // Agrupar tareas por usuario
         const tasksByUser = {};
@@ -32,14 +32,96 @@ cron.schedule('* * * * *', async () => {
             sendPushNotification(deviceToken, message);
         }
 
-        console.log('Notificaciones enviadas con éxito.');
+        console.log('Notificaciones diarias enviadas con éxito.');
     } catch (error) {
-        console.error('Error al enviar notificaciones:', error);
+        console.error('Error al enviar notificaciones diarias:', error);
     }
-}, {
-    timezone: "Europe/Madrid" // Zona horaria de España
+};
+
+// Función para programar notificaciones basadas en la importancia y la hora de la tarea
+const scheduleTaskReminders = async () => {
+    try {
+        // Obtener todas las tareas futuras
+        const tasks = await Task.find({
+            date: { $gte: new Date() } // Solo tareas futuras
+        }).populate('userId', 'fcmToken');
+
+        tasks.forEach(task => {
+            const taskTime = new Date(`${task.date}T${task.time}:00`);
+            if (isNaN(taskTime.getTime())) {
+                console.error("Fecha u hora inválida para la tarea:", task.title);
+                return; // Saltar esta tarea
+            }
+
+            const reminders = getRemindersBasedOnImportance(task.importance, taskTime);
+
+            reminders.forEach(reminder => {
+                if (!(reminder.time instanceof Date) || isNaN(reminder.time.getTime())) {
+                    console.error("Fecha inválida para el recordatorio:", reminder.time);
+                    return; // Saltar este recordatorio
+                }
+
+                const cronTime = getCronTime(reminder.time);
+                cron.schedule(cronTime, () => {
+                    const message = `Recordatorio: ${task.title} a las ${task.time}`;
+                    sendPushNotification(task.userId.fcmToken, message);
+                });
+            });
+        });
+
+        console.log('Recordatorios programados con éxito.');
+    } catch (error) {
+        console.error('Error al programar recordatorios:', error);
+    }
+};
+
+// Función para obtener los recordatorios basados en la importancia
+const getRemindersBasedOnImportance = (importance, taskTime) => {
+    const reminders = [];
+
+    switch (importance) {
+        case 'poco':
+            reminders.push({ time: new Date(taskTime.getTime() - 10 * 60000) }); // 10 minutos antes
+            break;
+        case 'medio':
+            reminders.push({ time: new Date(taskTime.getTime() - 60 * 60000) }); // 1 hora antes
+            reminders.push({ time: new Date(taskTime.getTime() - 10 * 60000) }); // 10 minutos antes
+            break;
+        case 'mucho':
+            reminders.push({ time: new Date(taskTime.getTime() - 180 * 60000) }); // 3 horas antes
+            reminders.push({ time: new Date(taskTime.getTime() - 60 * 60000) }); // 1 hora antes
+            reminders.push({ time: new Date(taskTime.getTime() - 10 * 60000) }); // 10 minutos antes
+            reminders.push({ time: new Date(taskTime.getTime() - 3 * 60000) }); // 3 minutos antes
+            break;
+        default:
+            break;
+    }
+
+    return reminders;
+};
+
+// Función para convertir una fecha a formato cron
+const getCronTime = (date) => {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+        throw new Error("Fecha inválida");
+    }
+
+    const minutes = date.getMinutes();
+    const hours = date.getHours();
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Los meses en cron van de 1 a 12
+    return `${minutes} ${hours} ${day} ${month} *`;
+};
+
+// Programar notificaciones diarias a las 8:00 AM
+cron.schedule('* * * * *', sendDailyNotifications, {
+    timezone: "Europe/Madrid"
 });
 
+// Programar recordatorios de tareas al iniciar el servidor
+scheduleTaskReminders();
+
+// Funciones auxiliares
 function timeToMinutes(time) {
     const [hours, minutes] = time.split(':').map(Number); // Divide la hora en horas y minutos
     return hours * 60 + minutes; // Convierte a minutos desde la medianoche
