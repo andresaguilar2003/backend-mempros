@@ -1,13 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from '../context/ThemeContext';
+import AssistantButton from '../components/AssistantButton';
+import VirtualAssistant from '../components/VirtualAssistant';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
     const { logout } = useContext(AuthContext);
     const { theme, toggleTheme } = useTheme();
+    const [showAssistant, setShowAssistant] = useState(false);
     
     return (
         <View style={[styles.container, theme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
@@ -51,6 +54,14 @@ export default function HomeScreen() {
             >
                 <Text style={styles.buttonText}>➕ Nueva tarea</Text>
             </TouchableOpacity>
+            
+            {/* Botón del asistente */}
+            <AssistantButton onPress={() => setShowAssistant(true)} />
+            
+            {/* Asistente modal */}
+            {showAssistant && (
+              <VirtualAssistant onClose={() => setShowAssistant(false)} />
+            )}
         </View>
     );
 }
