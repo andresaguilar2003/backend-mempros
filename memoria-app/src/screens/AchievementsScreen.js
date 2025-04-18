@@ -27,8 +27,13 @@ const AchievementsScreen = () => {
         setAllAchievements(allRes.data);
         setUnlockedIds(unlockedRes.data); // Esto asume que el array viene como lista de IDs
       } catch (err) {
-        console.error("❌ Error al obtener logros:", err.message);
-      }
+        if (err.response) {
+          console.error("❌ Error al obtener logros (respuesta del backend):", err.response.data);
+          console.error("📦 Código:", err.response.status);
+        } else {
+          console.error("❌ Error al obtener logros:", err.message);
+        }
+      }      
     };
   
     if (user?._id) {
