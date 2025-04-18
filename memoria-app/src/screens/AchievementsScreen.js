@@ -47,7 +47,7 @@ const AchievementsScreen = () => {
     return (
       <View style={[styles.card, unlocked ? styles.unlocked : styles.locked]}>
         <Image
-          source={getImageSource(item.image)}
+          source={getImageSource(item.icon)}
           style={[styles.image, { opacity: unlocked ? 1 : 0.3 }]}
         />
         <View style={styles.textContainer}>
@@ -58,14 +58,14 @@ const AchievementsScreen = () => {
     );
   };
 
-  const getImageSource = (filename) => {
-    switch (filename) {
-      case "medalla1.png":
+  const getImageSource = (iconCode) => {
+    switch (iconCode) {
+      case "first-task":
         return require("../assests/medals/medalla1.png");
-      case "medalla3.png":
-        return require("../assests/medals/medalla3.png");
-      case "medalla10.png":
+      case "ten-tasks":
         return require("../assests/medals/medalla10.png");
+      case "early-bird":
+        return require("../assests/medals/medallabird.png");
       default:
         return require("../assests/medals/question.png");
     }

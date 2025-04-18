@@ -10,19 +10,19 @@ const achievementsData = [
     code: "first-task",
     title: "¡Primera tarea!",
     description: "Has creado tu primera tarea. ¡Sigue así! 💪",
-    icon: "🎯",
+    icon: "first-task",
   },
   {
     code: "ten-tasks",
     title: "10 tareas completadas",
     description: "¡Has completado 10 tareas! 🏆",
-    icon: "🔥",
+    icon: "ten-tasks",
   },
   {
     code: "early-bird",
     title: "Madrugador",
     description: "Has completado una tarea antes de las 8 AM. 🌅",
-    icon: "⏰",
+    icon: "early-bird",
   },
 ];
 
