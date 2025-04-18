@@ -56,6 +56,17 @@ export default function AddTaskScreen({ route }) {
                 throw new Error(`Error al agregar tarea: ${response.status}`);
             }
 
+            
+            // 🎯 Intentamos desbloquear el logro
+            await fetch('http://192.168.1.19:5000/api/achievements/check', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ userId: user._id }),
+            });
+
             setTitle('');
             setDescription('');
             setDate(new Date());
@@ -72,81 +83,75 @@ export default function AddTaskScreen({ route }) {
     };
 
     return (
-        <ScrollView 
-            style={styles.container} 
-            contentContainerStyle={{ flexGrow: 1 }} 
-            keyboardShouldPersistTaps="handled"
-        >
-            <Text style={styles.label}>Título:</Text>
-            <TextInput
-                style={styles.input}
-                value={title}
-                onChangeText={setTitle}
-                placeholder="Título de la tarea"
+        <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+          <Text style={styles.label}>Título:</Text>
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Título de la tarea"
+          />
+    
+          <Text style={styles.label}>Descripción:</Text>
+          <TextInput
+            style={styles.input}
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Descripción de la tarea"
+          />
+    
+          <Text style={styles.label}>Fecha:</Text>
+          <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.dateText}>{date.toDateString()}</Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) setDate(selectedDate);
+              }}
             />
-
-            <Text style={styles.label}>Descripción:</Text>
-            <TextInput
-                style={styles.input}
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Descripción de la tarea"
+          )}
+    
+          <Text style={styles.label}>Hora:</Text>
+          <TouchableOpacity style={styles.dateButton} onPress={() => setShowTimePicker(true)}>
+            <Text style={styles.dateText}>
+              {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
+          {showTimePicker && (
+            <DateTimePicker
+              value={time}
+              mode="time"
+              is24Hour={true}
+              display="default"
+              onChange={(event, selectedTime) => {
+                setShowTimePicker(false);
+                if (selectedTime) setTime(selectedTime);
+              }}
             />
-
-            <Text style={styles.label}>Fecha:</Text>
-            <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
-                <Text style={styles.dateText}>{date.toDateString()}</Text>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) setDate(selectedDate);
-                    }}
-                />
-            )}
-
-            <Text style={styles.label}>Hora:</Text>
-            <TouchableOpacity style={styles.dateButton} onPress={() => setShowTimePicker(true)}>
-                <Text style={styles.dateText}>
-                    {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-            </TouchableOpacity>
-
-            {showTimePicker && (
-                <DateTimePicker
-                    value={time}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={(event, selectedTime) => {
-                        setShowTimePicker(false);
-                        if (selectedTime) setTime(selectedTime);
-                    }}
-                />
-            )}
-
-            <Text style={styles.label}>Importancia:</Text>
-            <Picker
-                selectedValue={importance}
-                onValueChange={(itemValue) => setImportance(itemValue)}
-                style={styles.picker}
-            >
-                <Picker.Item label="🔥 Poco" value="poco" />
-                <Picker.Item label="🔥🔥 Medio" value="medio" />
-                <Picker.Item label="🔥🔥🔥 Mucho" value="mucho" />
-            </Picker>
-
-            <TouchableOpacity style={styles.button} onPress={handleAddTask}>
-                <Text style={styles.buttonText}>➕ Añadir tarea</Text>
-            </TouchableOpacity>
+          )}
+    
+          <Text style={styles.label}>Importancia:</Text>
+          <Picker
+            selectedValue={importance}
+            onValueChange={(itemValue) => setImportance(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="🔥 Poco" value="poco" />
+            <Picker.Item label="🔥🔥 Medio" value="medio" />
+            <Picker.Item label="🔥🔥🔥 Mucho" value="mucho" />
+          </Picker>
+    
+          <TouchableOpacity style={styles.button} onPress={handleAddTask}>
+            <Text style={styles.buttonText}>➕ Añadir tarea</Text>
+          </TouchableOpacity>
         </ScrollView>
-    );
-}
+      );
+    }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f7f7f7' },
