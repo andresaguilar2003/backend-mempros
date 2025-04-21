@@ -75,7 +75,18 @@ router.put("/:id", authMiddleware, async (req, res) => {
         const { status, date, time } = req.body;
 
         const updatedTask = await Task.findOneAndUpdate(
+            // Reemplaza esta línea:
             { _id: req.params.id, userId: req.user.userId },
+
+            // POR ESTA:
+            {
+            _id: req.params.id,
+            $or: [
+                { userId: req.user.userId },
+                { assignedTo: req.user.userId }
+            ]
+            },
+
             { status, ...(date && { date }), ...(time && { time }) },
             { new: true }
         );
@@ -85,11 +96,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
         }
 
         // 🏆 Verificar si completó 10 tareas
-        if (status === "completed") {
+        if (status === "done") {
             const completedTasks = await Task.find({
                 userId: req.user.userId,
-                status: "completed",
+                status: "done",
             });
+        
 
             if (completedTasks.length === 10) {
                 await assignAchievementIfNeeded(req.user.userId, "ten-tasks");

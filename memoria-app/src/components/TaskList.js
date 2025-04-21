@@ -127,7 +127,7 @@ export default function TaskList({ userId }) {
 
                 <TouchableOpacity
                     style={styles.navButton}
-                    onPress={() => navigation.navigate("CalendarScreen", { tasks })}
+                    onPress={() => navigation.navigate("CalendarScreen", { tasks, userId })}
                 >
                     <Text style={styles.navButtonText}>📅 Calendario</Text>
                 </TouchableOpacity>
