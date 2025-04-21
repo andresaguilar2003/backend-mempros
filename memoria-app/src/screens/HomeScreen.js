@@ -36,11 +36,9 @@ export default function HomeScreen() {
             </TouchableOpacity>
 
             <Text style={[styles.title, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                Bienvenido a Memoria App
+                📓Memory AAP📓
             </Text>
-            <Text style={[styles.subtitle, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                Tu asistente personal de tareas
-            </Text>
+
 
             <TouchableOpacity 
                 style={styles.button} 
