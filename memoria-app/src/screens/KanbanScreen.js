@@ -12,7 +12,8 @@ const STATUS_TYPES = {
 
 const KanbanScreen = () => {
   const [tasks, setTasks] = useState([]);
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
+  const userId = user?._id;  
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [newDate, setNewDate] = useState(new Date());
@@ -39,6 +40,12 @@ const KanbanScreen = () => {
     } catch (error) {
       console.error("Error al cargar tareas:", error);
     }
+  };
+
+  const isTaskAssignedByOther = (task) => {
+    // Asegurarnos de manejar tanto si userId es string como objeto
+    const taskCreatorId = typeof task.userId === 'string' ? task.userId : task.userId?._id;
+    return taskCreatorId && taskCreatorId !== userId;
   };
 
   const updateTaskStatus = async (taskId, newStatus) => {
@@ -97,7 +104,12 @@ const KanbanScreen = () => {
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task._id === selectedTask._id
-            ? { ...task, date: newDate.toISOString(), time: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), status: "todo" }
+            ? { 
+                ...task, 
+                date: newDate.toISOString(), 
+                time: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), 
+                status: "todo" 
+              }
             : task
         )
       );
@@ -108,28 +120,16 @@ const KanbanScreen = () => {
     }
   };
 
-  const updateTaskDate = async (taskId, newDate, newTime) => {
-    try {
-      await fetch(`http://192.168.1.19:5000/api/tasks/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ date: newDate, time: newTime }),
-      });
-
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task._id === taskId ? { ...task, date: newDate, time: newTime } : task
-        )
-      );
-    } catch (error) {
-      console.error("Error al actualizar la fecha:", error);
-    }
-  };
-
   const handleTaskPress = (task) => {
+    if (isTaskAssignedByOther(task)) {
+      Alert.alert(
+        "Tarea asignada",
+        "Esta tarea fue asignada por otro usuario y no puede ser modificada.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     if (task.status === "todo") {
       Alert.alert(
         "Mover tarea",
@@ -157,6 +157,39 @@ const KanbanScreen = () => {
     }
   };
 
+  const renderTaskItem = ({ item, drag, isActive }) => {
+    const isAssigned = isTaskAssignedByOther(item);
+    const creatorName = typeof item.userId === 'object' ? item.userId.name : 'Usuario desconocido';
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.task,
+          isActive && styles.activeTask,
+          isAssigned && styles.assignedTask,
+        ]}
+        onLongPress={!isAssigned ? drag : undefined}
+        onPress={() => handleTaskPress(item)}
+      >
+        <Text style={styles.taskTitle}>{item.title}</Text>
+        <Text style={styles.taskDescription}>{item.description}</Text>
+        <Text style={styles.taskDate}>
+          📅 {new Date(item.date).toLocaleDateString()} - ⏰ {item.time}
+        </Text>
+        <Text style={styles.taskImportance}>🔥 {item.importance}</Text>
+  
+        {isAssigned && (
+          <>
+            <Text style={styles.creatorLabel}>✍️ Creada por: {creatorName}</Text>
+            <Text style={styles.assignedLabel}>
+              📝 Tarea asignada. No editable.
+            </Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   const renderColumn = (status) => {
     const filteredTasks = tasks.filter((task) => task.status === status);
 
@@ -166,20 +199,8 @@ const KanbanScreen = () => {
         <DraggableFlatList
           data={filteredTasks}
           keyExtractor={(item) => item._id}
-          renderItem={({ item, drag, isActive }) => (
-            <TouchableOpacity
-              style={[styles.task, isActive && styles.activeTask]}
-              onLongPress={drag}
-              onPress={() => handleTaskPress(item)}
-            >
-              <Text style={styles.taskTitle}>{item.title}</Text>
-              <Text style={styles.taskDescription}>{item.description}</Text>
-              <Text style={styles.taskDate}>
-                📅 {new Date(item.date).toLocaleDateString()} - ⏰ {item.time}
-              </Text>
-              <Text style={styles.taskImportance}>🔥 {item.importance}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={renderTaskItem}
+          scrollEnabled={false}
         />
       </View>
     );
@@ -188,24 +209,7 @@ const KanbanScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.kanbanContainer}>
-        {Object.keys(STATUS_TYPES).map((status) => (
-          <View key={status} style={styles.column}>
-            <Text style={styles.columnTitle}>{STATUS_TYPES[status]}</Text>
-            {tasks
-              .filter((task) => task.status === status)
-              .map((task) => (
-                <TouchableOpacity
-                  key={task._id}
-                  style={styles.task}
-                  onPress={() => handleTaskPress(task)}
-                >
-                  <Text style={styles.taskTitle}>{task.title}</Text>
-                  <Text style={styles.taskDescription}>{task.description}</Text>
-                  <Text style={styles.taskDate}>📅 {new Date(task.date).toLocaleDateString()} - ⏰ {task.time}</Text>
-                </TouchableOpacity>
-              ))}
-          </View>
-        ))}
+        {Object.keys(STATUS_TYPES).map((status) => renderColumn(status))}
       </View>
 
       {/* Modal para cambiar fecha y hora de tareas postergadas */}
@@ -216,11 +220,28 @@ const KanbanScreen = () => {
               <Text style={styles.modalTitle}>Elige nueva fecha y hora</Text>
               <Button title="Seleccionar fecha" onPress={() => setShowDatePicker(true)} />
               {showDatePicker && (
-                <DateTimePicker value={newDate} mode="date" display="default" onChange={(event, date) => { setShowDatePicker(false); if (date) setNewDate(date); }} />
+                <DateTimePicker 
+                  value={newDate} 
+                  mode="date" 
+                  display="default" 
+                  onChange={(event, date) => { 
+                    setShowDatePicker(false); 
+                    if (date) setNewDate(date); 
+                  }} 
+                />
               )}
               <Button title="Seleccionar hora" onPress={() => setShowTimePicker(true)} />
               {showTimePicker && (
-                <DateTimePicker value={newTime} mode="time" is24Hour display="default" onChange={(event, time) => { setShowTimePicker(false); if (time) setNewTime(time); }} />
+                <DateTimePicker 
+                  value={newTime} 
+                  mode="time" 
+                  is24Hour 
+                  display="default" 
+                  onChange={(event, time) => { 
+                    setShowTimePicker(false); 
+                    if (time) setNewTime(time); 
+                  }} 
+                />
               )}
               <View style={styles.modalButtons}>
                 <Button title="Cancelar" onPress={() => setModalVisible(false)} />
@@ -233,6 +254,7 @@ const KanbanScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { 
@@ -344,6 +366,24 @@ const styles = StyleSheet.create({
     color: "white", 
     fontSize: 16, 
     fontWeight: "bold" 
+  },
+  assignedTask: {
+    backgroundColor: "#f2f2f2",
+    borderColor: "#ccc",
+    borderWidth: 1,
+  },
+  
+  creatorLabel: {
+    fontSize: 12,
+    fontStyle: "italic",
+    color: "#555",
+    marginTop: 4,
+  },
+  
+  assignedLabel: {
+    fontSize: 12,
+    color: "#888",
+    marginTop: 2,
   }
 });
 
