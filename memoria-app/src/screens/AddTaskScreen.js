@@ -17,6 +17,7 @@ export default function AddTaskScreen({ route }) {
     const [status, setStatus] = useState('todo');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
+    const [assignedToEmail, setAssignedToEmail] = useState('');
 
     const navigation = useNavigation();
 
@@ -38,6 +39,7 @@ export default function AddTaskScreen({ route }) {
             importance,
             status,
             userId: user ? user._id : null, 
+            assignedToEmail: assignedToEmail.trim() || null,
         };
 
         console.log("📩 Datos enviados al backend:", newTask); // Verifica que el userId esté incluido
@@ -145,6 +147,16 @@ export default function AddTaskScreen({ route }) {
             <Picker.Item label="🔥🔥 Medio" value="medio" />
             <Picker.Item label="🔥🔥🔥 Mucho" value="mucho" />
           </Picker>
+
+          <Text style={styles.label}>Asignar a (correo):</Text>
+          <TextInput
+            style={styles.input}
+            value={assignedToEmail}
+            onChangeText={setAssignedToEmail}
+            placeholder="ejemplo@correo.com"
+          />
+
+
     
           <TouchableOpacity style={styles.button} onPress={handleAddTask}>
             <Text style={styles.buttonText}>➕ Añadir tarea</Text>

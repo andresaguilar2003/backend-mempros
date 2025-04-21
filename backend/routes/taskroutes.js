@@ -1,6 +1,7 @@
 // routes/taskRoutes.js
 const express = require("express");
 const Task = require("../models/task");
+const User = require("../models/User"); // 👇 NUEVO
 const authMiddleware = require("../middleware/authMiddleware");
 const { assignAchievementIfNeeded } = require("../utils/achievementManager");
 const router = express.Router();
@@ -8,10 +9,19 @@ const router = express.Router();
 // 🔹 Crear una tarea (Protegido)
 router.post("/", authMiddleware, async (req, res) => {
     try {
-        const { title, description, date, time, importance, status } = req.body;
+        const { title, description, date, time, importance, status, assignedToEmail } = req.body; // 👇 NUEVO
 
         if (!title || !date || !time) {
             return res.status(400).json({ error: "El título, la fecha y la hora son obligatorios" });
+        }
+
+        let assignedToUserId = null; // 👇 NUEVO
+        if (assignedToEmail) {
+            const assignedUser = await User.findOne({ email: assignedToEmail.trim().toLowerCase() });
+            if (!assignedUser) {
+                return res.status(404).json({ error: "Usuario asignado no encontrado" });
+            }
+            assignedToUserId = assignedUser._id;
         }
 
         const newTask = new Task({
@@ -22,6 +32,7 @@ router.post("/", authMiddleware, async (req, res) => {
             importance,
             status,
             userId: req.user.userId,
+            assignedTo: assignedToUserId, // 👇 NUEVO
         });
 
         await newTask.save();
@@ -42,7 +53,15 @@ router.post("/", authMiddleware, async (req, res) => {
 // 🔹 Obtener tareas del usuario autenticado (Protegido)
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        const tasks = await Task.find({ userId: req.user.userId });
+        const userId = req.user.userId;
+
+        const tasks = await Task.find({
+            $or: [
+                { userId: userId },
+                { assignedTo: userId } // 👇 NUEVO
+            ]
+        });
+
         res.json(tasks);
     } catch (error) {
         console.error("❌ Error al obtener tareas:", error.message);
@@ -105,9 +124,5 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Error al eliminar la tarea", details: error.message });
     }
 });
-
-
-
-
 
 module.exports = router;

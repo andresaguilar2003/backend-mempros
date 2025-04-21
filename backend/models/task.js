@@ -7,7 +7,12 @@ const TaskSchema = new mongoose.Schema({
     time: { type: String, required: true },  // 👈 Hora de la tarea (HH:MM)
     importance: { type: String, enum: ["poco", "medio", "mucho"], default: "medio" },
     status: { type: String, enum: ["todo", "done", "postponed"], default: "todo" },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true } // 🔹 Usuario que creó la tarea
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+      }
 });
 
 // Forzar que `date` sea un objeto `Date` antes de guardar
