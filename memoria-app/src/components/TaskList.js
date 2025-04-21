@@ -175,21 +175,29 @@ export default function TaskList({ userId }) {
                 <FlatList
                     data={sortedTasks} // Usar las tareas ordenadas
                     keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => (
-                        <View style={styles.taskItem}>
-                            <Text style={styles.title}>{item.title}</Text>
-                            <Text>{item.description}</Text>
-                            <Text style={styles.date}>📅 {item.date}</Text>
-                            <Text style={styles.importance}>🔥 {item.importance}</Text>
-
-                            <TouchableOpacity
-                                style={styles.deleteButton}
-                                onPress={() => deleteTask(item._id)}
-                            >
-                                <Text style={styles.deleteText}>🗑 Eliminar</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                    renderItem={({ item }) => {
+                        const isAssignedTask = item.userId !== userId;
+                    
+                        return (
+                            <View style={[styles.taskItem, isAssignedTask && styles.assignedTask]}>
+                                <Text style={styles.title}>{item.title}</Text>
+                                <Text>{item.description}</Text>
+                                <Text style={styles.date}>📅 {item.date}</Text>
+                                <Text style={styles.importance}>🔥 {item.importance}</Text>
+                    
+                                {isAssignedTask ? (
+                                    <Text style={styles.assignedLabel}>🧑‍🤝‍🧑 Asignada por otro usuario</Text>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={styles.deleteButton}
+                                        onPress={() => deleteTask(item._id)}
+                                    >
+                                        <Text style={styles.deleteText}>🗑 Eliminar</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        );
+                    }}                    
                     contentContainerStyle={{ flexGrow: 1 }}
                 />
             )}
@@ -303,4 +311,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: "center",
     },
+    assignedTask: {
+        borderColor: '#007bff',
+        borderWidth: 2,
+        backgroundColor: '#e6f0ff',
+    },
+    
+    assignedLabel: {
+        marginTop: 5,
+        color: '#007bff',
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+    },    
 });
