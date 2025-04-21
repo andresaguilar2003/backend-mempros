@@ -57,7 +57,8 @@ const CalendarScreen = ({ route }) => {
                         keyExtractor={(item) => item._id}
                         contentContainerStyle={{ paddingBottom: 100 }}
                         renderItem={({ item }) => {
-                            const isAssigned = item.userId !== userId;
+                            const isAssigned = item.userId._id !== userId;
+                        
                             return (
                                 <TouchableOpacity
                                     style={[
@@ -68,6 +69,13 @@ const CalendarScreen = ({ route }) => {
                                     <Text style={styles.taskTitle}>{item.title}</Text>
                                     <Text style={styles.taskDescription}>{item.description}</Text>
                                     <Text style={styles.taskTime}>⏰ {item.time}</Text>
+                        
+                                    {isAssigned && item.userId?.name && (
+                                        <Text style={styles.creatorLabel}>
+                                            ✍️ Creada por: {item.userId.name}
+                                        </Text>
+                                    )}
+                        
                                     {isAssigned && (
                                         <Text style={styles.assignedLabel}>
                                             🧑‍🤝‍🧑 Asignada por otro usuario
@@ -75,7 +83,7 @@ const CalendarScreen = ({ route }) => {
                                     )}
                                 </TouchableOpacity>
                             );
-                        }}
+                        }}                        
                     />
                 )}
             </View>
@@ -114,6 +122,13 @@ const styles = StyleSheet.create({
         color: "#007bff",
         fontSize: 12,
     },
+    creatorLabel: {
+        fontSize: 12,
+        fontStyle: "italic",
+        color: "#555",
+        marginTop: 2,
+    }
+    
 });
 
 export default CalendarScreen;

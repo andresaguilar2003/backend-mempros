@@ -60,7 +60,10 @@ router.get("/", authMiddleware, async (req, res) => {
                 { userId: userId },
                 { assignedTo: userId } // 👇 NUEVO
             ]
-        });
+        })
+
+        .populate("userId", "name")        // Esto traerá el nombre del creador
+        .populate("assignedTo", "name");
 
         res.json(tasks);
     } catch (error) {

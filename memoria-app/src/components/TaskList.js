@@ -173,18 +173,24 @@ export default function TaskList({ userId }) {
                 <ActivityIndicator size="large" color="#007bff" />
             ) : (
                 <FlatList
-                    data={sortedTasks} // Usar las tareas ordenadas
+                    data={sortedTasks}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => {
-                        const isAssignedTask = item.userId !== userId;
-                    
+                        const isAssignedTask = item.userId._id !== userId;
+
                         return (
                             <View style={[styles.taskItem, isAssignedTask && styles.assignedTask]}>
                                 <Text style={styles.title}>{item.title}</Text>
                                 <Text>{item.description}</Text>
                                 <Text style={styles.date}>📅 {item.date}</Text>
                                 <Text style={styles.importance}>🔥 {item.importance}</Text>
-                    
+
+                                {isAssignedTask && item.userId?.name && (
+                                    <Text style={styles.creatorLabel}>
+                                        ✍️ Creada por: {item.userId.name}
+                                    </Text>
+                                )}
+
                                 {isAssignedTask ? (
                                     <Text style={styles.assignedLabel}>🧑‍🤝‍🧑 Asignada por otro usuario</Text>
                                 ) : (
@@ -197,10 +203,11 @@ export default function TaskList({ userId }) {
                                 )}
                             </View>
                         );
-                    }}                    
+                    }}
                     contentContainerStyle={{ flexGrow: 1 }}
                 />
             )}
+
         </KeyboardAvoidingView>
     );
 }
@@ -323,4 +330,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontStyle: 'italic',
     },    
+    creatorLabel: {
+        fontStyle: "italic",
+        color: "#666",
+        marginTop: 4,
+    }
+    
 });
