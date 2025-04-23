@@ -77,7 +77,7 @@ export default function AddTaskScreen({ route }) {
             setStatus('todo');
 
             Alert.alert('Éxito', 'Tarea añadida correctamente');
-            navigation.navigate('TaskList');
+            navigation.navigate('Tareas');
         } catch (error) {
             console.error('Error al añadir tarea:', error);
             Alert.alert('Error', 'No se pudo añadir la tarea');
