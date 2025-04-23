@@ -7,7 +7,7 @@ const AchievementsButton = ({ onPress }) => {
       style={styles.button}
       onPress={onPress}
     >
-      <Text style={styles.buttonText}>🏅</Text>
+      <Text style={styles.buttonText}>Logros🏅</Text>
     </TouchableOpacity>
   );
 };

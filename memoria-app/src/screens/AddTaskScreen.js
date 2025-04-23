@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { Picker } from '@react-native-picker/picker'; 
 import { AuthContext } from "../context/AuthContext";
+import AchievementPopup from '../components/AchievementPopup';
 
 export default function AddTaskScreen({ route }) {
     const { user,token } = useContext(AuthContext);
@@ -17,7 +18,9 @@ export default function AddTaskScreen({ route }) {
     const [status, setStatus] = useState('todo');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
-    const [assignedToEmail, setAssignedToEmail] = useState('');
+    const [assignedToEmail, setAssignedToEmail] = useState('');  
+    const [showPopup, setShowPopup] = useState(false);
+    const [unlockedAchievement, setUnlockedAchievement] = useState(null);
 
     const navigation = useNavigation();
 
@@ -59,16 +62,6 @@ export default function AddTaskScreen({ route }) {
             }
 
             
-            // 🎯 Intentamos desbloquear el logro
-            await fetch('http://192.168.1.19:5000/api/achievements/check', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ userId: user._id }),
-            });
-
             setTitle('');
             setDescription('');
             setDate(new Date());
@@ -78,6 +71,34 @@ export default function AddTaskScreen({ route }) {
 
             Alert.alert('Éxito', 'Tarea añadida correctamente');
             navigation.navigate('Tareas');
+
+            try {
+              // Llamar al endpoint /check para verificar logros nuevos
+              const checkResponse = await fetch('http://192.168.1.19:5000/api/achievements/check', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ userId: user._id }),
+              });
+
+              const checkData = await checkResponse.json();
+              console.log("📥 Respuesta del check de logros:", checkData);
+
+              if (checkData.unlocked && checkData.unlocked.length > 0) {
+                const unlocked = checkData.unlocked[0];
+                setUnlockedAchievement(unlocked);
+                setShowPopup(true);
+
+                // Oculta el popup después de 4 segundos
+                setTimeout(() => {
+                  setShowPopup(false);
+                }, 7000);
+              }
+            } catch (error) {
+              console.error("❌ Error al verificar logros:", error);
+            }
         } catch (error) {
             console.error('Error al añadir tarea:', error);
             Alert.alert('Error', 'No se pudo añadir la tarea');
@@ -85,6 +106,7 @@ export default function AddTaskScreen({ route }) {
     };
 
     return (
+      <>
         <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <Text style={styles.label}>Título:</Text>
           <TextInput
@@ -162,6 +184,11 @@ export default function AddTaskScreen({ route }) {
             <Text style={styles.buttonText}>➕ Añadir tarea</Text>
           </TouchableOpacity>
         </ScrollView>
+        <AchievementPopup
+          visible={showPopup}
+          achievement={unlockedAchievement}
+        />
+        </>
       );
     }
 

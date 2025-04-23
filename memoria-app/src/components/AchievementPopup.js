@@ -1,73 +1,67 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, Modal } from "react-native";
+import React from 'react';
+import { Modal, View, Text, StyleSheet, Image, Animated, Dimensions } from 'react-native';
 
-const AchievementPopup = ({ visible, onClose, achievement }) => {
-  if (!achievement) return null;
+const { width } = Dimensions.get('window');
+
+const iconMap = {
+  'first-task': require('../assests/medals/medalla1.png'),
+  'ten-completed': require('../assests/medals/medalla10.png'),
+  'early-bird': require('../assests/medals/medallabird.png'),
+};
+
+export default function AchievementPopup({ visible, achievement }) {
+  if (!visible || !achievement) return null;
+
+  const icon = iconMap[achievement.code] || require('../assests/medals/question.png');
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.popup}>
           <Text style={styles.title}>🏆 ¡Logro desbloqueado!</Text>
-          <Image
-            source={getImageSource(achievement.image)}
-            style={styles.image}
-          />
-          <Text style={styles.name}>{achievement.name}</Text>
+          <Image source={icon} style={styles.image} />
+          <Text style={styles.achievementTitle}>{achievement.title}</Text>
           <Text style={styles.description}>{achievement.description}</Text>
         </View>
       </View>
     </Modal>
   );
-};
-
-const getImageSource = (iconCode) => {
-  switch (iconCode) {
-    case "first-task":
-      return require("../assests/medals/medalla1.png");
-    case "ten-tasks":
-      return require("../assests/medals/medalla10.png");
-    case "early-bird":
-      return require("../assests/medals/medallabird.png");
-    default:
-      return require("../assests/medals/question.png");
-  }
-};
+}
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   popup: {
-    backgroundColor: "#fff",
-    padding: 24,
+    width: width * 0.8,
+    backgroundColor: '#fff',
     borderRadius: 20,
-    alignItems: "center",
-    width: "80%",
+    padding: 24,
+    alignItems: 'center',
+    elevation: 5,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 12,
-    color: "green",
   },
   image: {
     width: 80,
     height: 80,
     marginBottom: 12,
   },
-  name: {
-    fontSize: 16,
-    fontWeight: "bold",
+  achievementTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
   },
   description: {
-    textAlign: "center",
-    marginTop: 8,
-    color: "#444",
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 6,
+    color: '#666',
   },
 });
-
-export default AchievementPopup;
