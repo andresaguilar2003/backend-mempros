@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import DraggableFlatList from "react-native-draggable-flatlist";
-import { AuthContext } from "../context/AuthContext";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal, Button, FlatList, ScrollView, useWindowDimensions } from "react-native";
 
-const STATUS_TYPES = {
-  todo: "📌 Por hacer",
-  done: "✅ Hecha",
-  postponed: "⏳ Postpuesta",
-};
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { AuthContext } from "../context/AuthContext";
 
 const KanbanScreen = () => {
   const [tasks, setTasks] = useState([]);
   const { token, user } = useContext(AuthContext);
-  const userId = user?._id;  
+  const userId = user?._id;
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [newDate, setNewDate] = useState(new Date());
   const [newTime, setNewTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+
 
   useEffect(() => {
     fetchTasks();
@@ -29,12 +26,9 @@ const KanbanScreen = () => {
     try {
       const response = await fetch("http://192.168.1.19:5000/api/tasks", {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error("Error al obtener las tareas");
-
       const data = await response.json();
       setTasks(data);
     } catch (error) {
@@ -43,29 +37,33 @@ const KanbanScreen = () => {
   };
 
   const isTaskAssignedByOther = (task) => {
-    // Asegurarnos de manejar tanto si userId es string como objeto
-    const taskCreatorId = typeof task.userId === 'string' ? task.userId : task.userId?._id;
+    const taskCreatorId = typeof task.userId === "string" ? task.userId : task.userId?._id;
     return taskCreatorId && taskCreatorId !== userId;
   };
 
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
+      const task = tasks.find((t) => t._id === taskId);
       await fetch(`http://192.168.1.19:5000/api/tasks/${taskId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ 
+          status: newStatus,
+          date: task.date,
+          time: task.time,
+        }),
       });
 
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
+      setTasks((prev) =>
+        prev.map((task) =>
           task._id === taskId ? { ...task, status: newStatus } : task
         )
       );
     } catch (error) {
-      console.error("Error al actualizar el estado:", error);
+      console.error("Error al actualizar estado:", error);
     }
   };
 
@@ -74,11 +72,11 @@ const KanbanScreen = () => {
       await fetch(`http://192.168.1.19:5000/api/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+      setTasks((prev) => prev.filter((task) => task._id !== taskId));
     } catch (error) {
       console.error("Error al eliminar la tarea:", error);
     }
@@ -86,7 +84,7 @@ const KanbanScreen = () => {
 
   const updateTaskDateTime = async () => {
     try {
-      const response = await fetch(`http://192.168.1.19:5000/api/tasks/${selectedTask._id}`, {
+      await fetch(`http://192.168.1.19:5000/api/tasks/${selectedTask._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -99,16 +97,14 @@ const KanbanScreen = () => {
         }),
       });
 
-      if (!response.ok) throw new Error("Error al actualizar la tarea");
-
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task._id === selectedTask._id
-            ? { 
-                ...task, 
-                date: newDate.toISOString(), 
-                time: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), 
-                status: "todo" 
+            ? {
+                ...task,
+                date: newDate.toISOString(),
+                time: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                status: "todo",
               }
             : task
         )
@@ -122,125 +118,95 @@ const KanbanScreen = () => {
 
   const handleTaskPress = (task) => {
     if (isTaskAssignedByOther(task)) {
-      Alert.alert(
-        "Tarea asignada",
-        "Esta tarea fue asignada por otro usuario y no puede ser modificada.",
-        [{ text: "OK" }]
-      );
+      Alert.alert("Tarea asignada", "Esta tarea fue asignada por otro usuario y no puede ser modificada.");
       return;
     }
 
     if (task.status === "todo") {
-      Alert.alert(
-        "Mover tarea",
-        "¿A qué estado quieres mover la tarea?",
-        [
-          { text: "✅ Hecha", onPress: () => updateTaskStatus(task._id, "done") },
-          { text: "⏳ Postponer", onPress: () => updateTaskStatus(task._id, "postponed") },
-          { text: "Cancelar", style: "cancel" },
-        ],
-        { cancelable: true }
-      );
+      Alert.alert("Mover tarea", "¿A qué estado quieres moverla?", [
+        { text: "✅ Hecha", onPress: () => updateTaskStatus(task._id, "done") },
+        { text: "⏳ Postponer", onPress: () => updateTaskStatus(task._id, "postponed") },
+        { text: "Cancelar", style: "cancel" },
+      ]);
     } else if (task.status === "done") {
-      Alert.alert(
-        "Eliminar tarea",
-        "¿Quieres borrar esta tarea?",
-        [
-          { text: "Cancelar", style: "cancel" },
-          { text: "🗑️ Borrar", onPress: () => deleteTask(task._id), style: "destructive" },
-        ],
-        { cancelable: true }
-      );
+      Alert.alert("Eliminar tarea", "¿Seguro que deseas eliminarla?", [
+        { text: "Cancelar", style: "cancel" },
+        { text: "🗑️ Eliminar", style: "destructive", onPress: () => deleteTask(task._id) },
+      ]);
     } else if (task.status === "postponed") {
       setSelectedTask(task);
       setModalVisible(true);
     }
   };
 
-  const renderTaskItem = ({ item, drag, isActive }) => {
+  const renderTask = ({ item }) => {
     const isAssigned = isTaskAssignedByOther(item);
-    const creatorName = typeof item.userId === 'object' ? item.userId.name : 'Usuario desconocido';
+    const creatorName = typeof item.userId === "object" ? item.userId.name : "Otro usuario";
 
     return (
       <TouchableOpacity
-        style={[
-          styles.task,
-          isActive && styles.activeTask,
-          isAssigned && styles.assignedTask,
-        ]}
-        onLongPress={!isAssigned ? drag : undefined}
+        style={[styles.task, isAssigned && styles.assignedTask]}
         onPress={() => handleTaskPress(item)}
       >
         <Text style={styles.taskTitle}>{item.title}</Text>
         <Text style={styles.taskDescription}>{item.description}</Text>
-        <Text style={styles.taskDate}>
-          📅 {new Date(item.date).toLocaleDateString()} - ⏰ {item.time}
+        <Text style={styles.taskMeta}>
+          📅 {new Date(item.date).toLocaleDateString()} ⏰ {item.time}
         </Text>
-        <Text style={styles.taskImportance}>🔥 {item.importance}</Text>
-  
         {isAssigned && (
-          <>
-            <Text style={styles.creatorLabel}>✍️ Creada por: {creatorName}</Text>
-            <Text style={styles.assignedLabel}>
-              📝 Tarea asignada. No editable.
-            </Text>
-          </>
+          <Text style={styles.creatorLabel}>✍️ {creatorName} - Tarea asignada</Text>
         )}
       </TouchableOpacity>
     );
   };
 
-  const renderColumn = (status) => {
-    const filteredTasks = tasks.filter((task) => task.status === status);
-
-    return (
-      <View style={styles.column}>
-        <Text style={styles.columnTitle}>{STATUS_TYPES[status]}</Text>
-        <DraggableFlatList
-          data={filteredTasks}
-          keyExtractor={(item) => item._id}
-          renderItem={renderTaskItem}
-          scrollEnabled={false}
-        />
-      </View>
-    );
-  };
+  const Section = ({ title, data }) => (
+    <View style={[styles.section, title.includes("📌") && styles.todoColumn, title.includes("✅") && styles.doneColumn, title.includes("⏳") && styles.postponedColumn]}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item._id}
+        renderItem={renderTask}
+        scrollEnabled={false}
+      />
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.kanbanContainer}>
-        {Object.keys(STATUS_TYPES).map((status) => renderColumn(status))}
+    <ScrollView style={styles.container}>
+      <View style={[styles.boardContainer, isLandscape && styles.boardLandscape]}>
+        <Section title="📌 Por hacer" data={tasks.filter((t) => t.status === "todo")} />
+        <Section title="✅ Hechas" data={tasks.filter((t) => t.status === "done")} />
+        <Section title="⏳ Postpuestas" data={tasks.filter((t) => t.status === "postponed")} />
       </View>
-
-      {/* Modal para cambiar fecha y hora de tareas postergadas */}
       {selectedTask && (
         <Modal visible={modalVisible} transparent animationType="slide">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Elige nueva fecha y hora</Text>
+              <Text style={styles.modalTitle}>Nueva fecha y hora</Text>
               <Button title="Seleccionar fecha" onPress={() => setShowDatePicker(true)} />
               {showDatePicker && (
-                <DateTimePicker 
-                  value={newDate} 
-                  mode="date" 
-                  display="default" 
-                  onChange={(event, date) => { 
-                    setShowDatePicker(false); 
-                    if (date) setNewDate(date); 
-                  }} 
+                <DateTimePicker
+                  value={newDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => {
+                    setShowDatePicker(false);
+                    if (date) setNewDate(date);
+                  }}
                 />
               )}
               <Button title="Seleccionar hora" onPress={() => setShowTimePicker(true)} />
               {showTimePicker && (
-                <DateTimePicker 
-                  value={newTime} 
-                  mode="time" 
-                  is24Hour 
-                  display="default" 
-                  onChange={(event, time) => { 
-                    setShowTimePicker(false); 
-                    if (time) setNewTime(time); 
-                  }} 
+                <DateTimePicker
+                  value={newTime}
+                  mode="time"
+                  is24Hour
+                  display="default"
+                  onChange={(event, time) => {
+                    setShowTimePicker(false);
+                    if (time) setNewTime(time);
+                  }}
                 />
               )}
               <View style={styles.modalButtons}>
@@ -251,140 +217,109 @@ const KanbanScreen = () => {
           </View>
         </Modal>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
-
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#f4f4f4", 
-    padding: 10 
+  container: {
+    padding: 12,
+    backgroundColor: "#f1f5f9",
   },
-  kanbanContainer: { 
-    flexDirection: "row", 
-    justifyContent: "space-between",
-    width: "100%", 
+  section: {
+    flex: 1,
+    minWidth: 250,
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },  
+  todoColumn: {
+    backgroundColor: "#e0f2fe", // azul claro
   },
-  columnContainer: { 
-    flex: 1, 
-    marginHorizontal: 5 
+  doneColumn: {
+    backgroundColor: "#dcfce7", // verde claro
   },
-  column: {
+  postponedColumn: {
+    backgroundColor: "#fef9c3", // amarillo suave
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#1e293b",
+  },
+  task: {
     backgroundColor: "#ffffff",
     borderRadius: 10,
     padding: 10,
+    marginBottom: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    flex: 1, 
-    minWidth: "30%", 
-  },
-  columnTitle: { 
-    fontSize: 18, 
-    fontWeight: "bold", 
-    textAlign: "center", 
-    marginBottom: 10, 
-    paddingVertical: 5, 
-    borderBottomWidth: 2, 
-    borderBottomColor: "#ddd" 
-  },
-  task: {
-    backgroundColor: "#ffeb99",
-    padding: 12,
-    marginVertical: 6,
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-  },
-  taskTitle: { 
-    fontSize: 16, 
-    fontWeight: "bold",
-    color: "#333"
-  },
-  taskDescription: { 
-    fontSize: 14, 
-    color: "#555",
-    marginVertical: 4 
-  },
-  taskDate: { 
-    fontSize: 12, 
-    color: "#777", 
-    marginTop: 5 
-  },
-  taskImportance: { 
-    fontSize: 12, 
-    color: "#777", 
-    marginTop: 2 
-  },
-  modalContainer: { 
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: "center", 
-    backgroundColor: "rgba(0,0,0,0.5)" 
-  },
-  modalContent: { 
-    backgroundColor: "#fff", 
-    padding: 25, 
-    borderRadius: 10, 
-    width: "80%",
-    alignItems: "center"  // 🔹 Asegura que todo el contenido dentro del modal esté centrado
-  },
-  modalTitle: { 
-    fontSize: 18, 
-    fontWeight: "bold", 
-    marginBottom: 15, 
-    textAlign: "center" 
-  },
-  modalButtons: { 
-    flexDirection: "column",  // 🔹 Los botones se apilan en una columna en vez de una fila
-    alignItems: "center", // 🔹 Centra los botones dentro del modal
-    width: "100%", 
-    marginTop: 15 
-  },
-  activeTask: { 
-    backgroundColor: "#ffcc00" 
-  },
-  actionContainer: { 
-    alignItems: "center", 
-    justifyContent: "center",
-    marginVertical: 10 
-  },
-  actionButton: { 
-    backgroundColor: "#007bff", 
-    padding: 12, 
-    borderRadius: 5, 
-    marginVertical: 8,  // 🔹 Más espacio entre los botones para mejor visibilidad
-    width: "80%",  // 🔹 Controla el ancho para mantener uniformidad
-    alignItems: "center"
-  },
-  actionText: { 
-    color: "white", 
-    fontSize: 16, 
-    fontWeight: "bold" 
+    shadowRadius: 3,
+    elevation: 2,
   },
   assignedTask: {
-    backgroundColor: "#f2f2f2",
-    borderColor: "#ccc",
+    borderColor: "#f87171",
     borderWidth: 1,
   },
-  
-  creatorLabel: {
-    fontSize: 12,
-    fontStyle: "italic",
-    color: "#555",
-    marginTop: 4,
+  taskTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
   },
-  
-  assignedLabel: {
+  taskDescription: {
+    color: "#475569",
+    marginBottom: 6,
+  },
+  taskMeta: {
     fontSize: 12,
-    color: "#888",
-    marginTop: 2,
-  }
+    color: "#94a3b8",
+  },
+  creatorLabel: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#ef4444",
+    fontStyle: "italic",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  boardContainer: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  boardLandscape: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },  
 });
 
 

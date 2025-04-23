@@ -24,7 +24,7 @@ function AppNavigator() {
           <Stack.Screen name="Tareas" component={TaskScreen} />
           <Stack.Screen name="AddTask" component={AddTaskScreen} />
           <Stack.Screen name="Logros" component={AchievementsScreen} />
-          <Stack.Screen name="KanbanScreen" component={KanbanScreen} options={{ title: "Tablero Kanban" }} />
+          <Stack.Screen name="KanbanScreen" component={KanbanScreen} options={{ title: "Estado de las tareas" }} />
           <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ title: "Calendario" }} />
         </>
       ) : (

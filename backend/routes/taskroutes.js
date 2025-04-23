@@ -77,20 +77,24 @@ router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { status, date, time } = req.body;
 
+        // Validar que si se marca como hecha, venga con hora
+        if (status === "done" && !time) {
+            return res.status(400).json({ error: "La hora es requerida para tareas completadas" });
+        }
+
         const updatedTask = await Task.findOneAndUpdate(
-            // Reemplaza esta línea:
-            { _id: req.params.id, userId: req.user.userId },
-
-            // POR ESTA:
             {
-            _id: req.params.id,
-            $or: [
-                { userId: req.user.userId },
-                { assignedTo: req.user.userId }
-            ]
+                _id: req.params.id,
+                $or: [
+                    { userId: req.user.userId },
+                    { assignedTo: req.user.userId }
+                ]
             },
-
-            { status, ...(date && { date }), ...(time && { time }) },
+            {
+                ...(status && { status }),
+                ...(date && { date }),
+                ...(time && { time })
+            },
             { new: true }
         );
 
@@ -104,16 +108,17 @@ router.put("/:id", authMiddleware, async (req, res) => {
                 userId: req.user.userId,
                 status: "done",
             });
-        
 
             if (completedTasks.length === 10) {
                 await assignAchievementIfNeeded(req.user.userId, "ten-tasks");
             }
 
             // 🕗 Verificar si la completó antes de las 08:00
-            const taskHour = parseInt(updatedTask.time.split(":")[0]);
-            if (taskHour < 8) {
-                await assignAchievementIfNeeded(req.user.userId, "early-bird");
+            if (updatedTask.time) {
+                const taskHour = parseInt(updatedTask.time.split(":")[0]);
+                if (taskHour < 8) {
+                    await assignAchievementIfNeeded(req.user.userId, "early-bird");
+                }
             }
         }
 
@@ -123,6 +128,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Error al actualizar la tarea", details: error.message });
     }
 });
+
 
 // 🔹 Eliminar una tarea (Protegido)
 router.delete("/:id", authMiddleware, async (req, res) => {
