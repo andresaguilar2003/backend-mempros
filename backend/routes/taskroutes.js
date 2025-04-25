@@ -9,19 +9,24 @@ const router = express.Router();
 // 🔹 Crear una tarea (Protegido)
 router.post("/", authMiddleware, async (req, res) => {
     try {
-        const { title, description, date, time, importance, status, assignedToEmail } = req.body; // 👇 NUEVO
+        const { title, description, date, time, importance, status, assignedToEmails } = req.body; // 👇 NUEVO
 
         if (!title || !date || !time) {
             return res.status(400).json({ error: "El título, la fecha y la hora son obligatorios" });
         }
 
-        let assignedToUserId = null; // 👇 NUEVO
-        if (assignedToEmail) {
-            const assignedUser = await User.findOne({ email: assignedToEmail.trim().toLowerCase() });
-            if (!assignedUser) {
-                return res.status(404).json({ error: "Usuario asignado no encontrado" });
+        let assignedUserIds = [];
+
+        if (Array.isArray(assignedToEmails) && assignedToEmails.length > 0) {
+            const users = await User.find({
+                email: { $in: assignedToEmails.map(e => e.trim().toLowerCase()) }
+            });
+        
+            if (users.length !== assignedToEmails.length) {
+                return res.status(404).json({ error: "Uno o más correos no corresponden a usuarios registrados" });
             }
-            assignedToUserId = assignedUser._id;
+        
+            assignedUserIds = users.map(user => user._id);
         }
 
         const newTask = new Task({
@@ -32,7 +37,7 @@ router.post("/", authMiddleware, async (req, res) => {
             importance,
             status,
             userId: req.user.userId,
-            assignedTo: assignedToUserId, // 👇 NUEVO
+            assignedTo: assignedUserIds, // 👇 NUEVO
         });
 
         await newTask.save();

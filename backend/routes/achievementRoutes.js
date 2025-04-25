@@ -50,7 +50,7 @@ router.post("/check", authMiddleware, async (req, res) => {
     const unlocked = [];
 
     // Condición: primera tarea creada
-    const userTasks = await require("../models/Task").find({ userId });
+    const userTasks = await require("../models/task").find({ userId });
     if (userTasks.length >= 1) {
       await assignAchievementIfNeeded(userId, "first-task");
       const first = await Achievement.findOne({ code: "first-task" });

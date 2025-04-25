@@ -176,7 +176,7 @@ export default function TaskList({ userId }) {
                     data={sortedTasks}
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => {
-                        const isAssignedTask = item.userId._id !== userId;
+                        const isAssignedTask = item.userId._id !== userId && item.assignedTo?.some(user => user._id === userId);
 
                         return (
                             <View style={[styles.taskItem, isAssignedTask && styles.assignedTask]}>

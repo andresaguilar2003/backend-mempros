@@ -57,7 +57,7 @@ const CalendarScreen = ({ route }) => {
                         keyExtractor={(item) => item._id}
                         contentContainerStyle={{ paddingBottom: 100 }}
                         renderItem={({ item }) => {
-                            const isAssigned = item.userId._id !== userId;
+                            const isAssigned = item.userId._id !== userId && item.assignedTo?.some(user => user._id === userId);
                         
                             return (
                                 <TouchableOpacity

@@ -18,7 +18,7 @@ export default function AddTaskScreen({ route }) {
     const [status, setStatus] = useState('todo');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
-    const [assignedToEmail, setAssignedToEmail] = useState('');  
+    const [assignedToEmails, setAssignedToEmails] = useState(['']);
     const [showPopup, setShowPopup] = useState(false);
     const [unlockedAchievement, setUnlockedAchievement] = useState(null);
 
@@ -42,7 +42,7 @@ export default function AddTaskScreen({ route }) {
             importance,
             status,
             userId: user ? user._id : null, 
-            assignedToEmail: assignedToEmail.trim() || null,
+            assignedToEmails: assignedToEmails.filter(email => email.trim() !== ''),
         };
 
         console.log("📩 Datos enviados al backend:", newTask); // Verifica que el userId esté incluido
@@ -170,13 +170,28 @@ export default function AddTaskScreen({ route }) {
             <Picker.Item label="🔥🔥🔥 Mucho" value="mucho" />
           </Picker>
 
-          <Text style={styles.label}>Asignar a (correo):</Text>
-          <TextInput
-            style={styles.input}
-            value={assignedToEmail}
-            onChangeText={setAssignedToEmail}
-            placeholder="ejemplo@correo.com"
-          />
+          <Text style={styles.label}>Asignar a (correos):</Text>
+          {assignedToEmails.map((email, index) => (
+            <TextInput
+              key={index}
+              style={styles.input}
+              value={email}
+              onChangeText={(text) => {
+                const updated = [...assignedToEmails];
+                updated[index] = text;
+                setAssignedToEmails(updated);
+              }}
+              placeholder={`Correo asignado #${index + 1}`}
+            />
+          ))}
+        <TouchableOpacity
+          style={styles.buttonSecondary}
+          onPress={() => setAssignedToEmails([...assignedToEmails, ''])}
+        >
+          <Text style={styles.buttonSecondaryText}>➕ Añadir otro usuario</Text>
+        </TouchableOpacity>
+
+
 
 
     
@@ -220,4 +235,18 @@ const styles = StyleSheet.create({
         margin: 20
     },
     buttonText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+    buttonSecondary: {
+      borderWidth: 1,
+      borderColor: "#999",
+      borderRadius: 8,
+      padding: 8,
+      marginVertical: 10,
+      alignItems: "center",
+      backgroundColor: "#f0f0f0"
+    },
+    buttonSecondaryText: {
+      color: "#666",
+      fontSize: 14,
+    }
+    
 });
