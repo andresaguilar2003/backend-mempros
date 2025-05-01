@@ -3,70 +3,88 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from '../context/ThemeContext';
-import AssistantButton from '../components/AssistantButton';
 import VirtualAssistant from '../components/VirtualAssistant';
-import AchievementsButton from '../components/AchievementsButton';
+import { Menu, Provider, IconButton } from 'react-native-paper';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
     const { logout } = useContext(AuthContext);
     const { theme, toggleTheme } = useTheme();
     const [showAssistant, setShowAssistant] = useState(false);
-    
+    const [menuVisible, setMenuVisible] = useState(false);
+
+    const openMenu = () => setMenuVisible(true);
+    const closeMenu = () => setMenuVisible(false);
+
+    const handleNavigateLogros = () => {
+        closeMenu();
+        navigation.navigate('Logros');
+    };
+
+    const handleToggleTheme = () => {
+        closeMenu();
+        toggleTheme();
+    };
+
+    const handleAssistant = () => {
+        closeMenu();
+        setShowAssistant(true);
+    };
+
+    const handleLogout = () => {
+        closeMenu();
+        logout();
+    };
+
     return (
-        <View style={[styles.container, theme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-            {/* ✓ Botón mejorado para cerrar sesión */}
-            <TouchableOpacity 
-                style={[styles.logoutButton, theme === 'dark' ? styles.logoutButtonDark : styles.logoutButtonLight]} 
-                onPress={logout}
-            >
-                <Text style={styles.logoutButtonText}>
-                    <Text style={styles.logoutIcon}>✕</Text> Cerrar Sesión
+        <Provider>
+            <View style={[styles.container, theme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
+                <View style={styles.menuContainer}>
+                    <Menu
+                        visible={menuVisible}
+                        onDismiss={closeMenu}
+                        anchor={
+                            <IconButton
+                                icon="menu"
+                                size={28}
+                                onPress={openMenu}
+                            />
+                        }
+                    >
+                        <Menu.Item onPress={handleLogout} title="Cerrar sesión" leadingIcon="logout" />
+                        <Menu.Item onPress={handleToggleTheme} title={`Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`} leadingIcon="theme-light-dark" />
+                        <Menu.Item onPress={handleNavigateLogros} title="Ver logros" leadingIcon="star" />
+                        <Menu.Item onPress={handleAssistant} title="Asistente virtual" leadingIcon="robot" />
+                    </Menu>
+                </View>
+
+                <Text style={[styles.title, theme === 'dark' ? styles.darkText : styles.lightText]}>
+                    📓Memory AAP📓
                 </Text>
-            </TouchableOpacity>
 
-            {/* 🌙☀ Botón para cambiar el tema */}
-            <TouchableOpacity 
-                style={[styles.themeButton, theme === 'dark' ? styles.themeButtonDark : styles.themeButtonLight]} 
-                onPress={toggleTheme}
-            >
-                <Text style={styles.themeButtonText}>
-                    {theme === 'dark' ? '☀' : '🌙'}
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={() => navigation.navigate('Tareas')}
+                >
+                    <Text style={styles.buttonText}>📋 Ver mis tareas</Text>
+                </TouchableOpacity>
 
-            <Text style={[styles.title, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                📓Memory AAP📓
-            </Text>
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={() => navigation.navigate('AddTask')}
+                >
+                    <Text style={styles.buttonText}>➕ Nueva tarea</Text>
+                </TouchableOpacity>
 
-
-            <TouchableOpacity 
-                style={styles.button} 
-                onPress={() => navigation.navigate('Tareas')}
-            >
-                <Text style={styles.buttonText}>📋 Ver mis tareas</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style={styles.button} 
-                onPress={() => navigation.navigate('AddTask')}
-            >
-                <Text style={styles.buttonText}>➕ Nueva tarea</Text>
-            </TouchableOpacity>
-            
-            <AchievementsButton onPress={() => navigation.navigate('Logros')} />
-
-
-            {/* Botón del asistente */}
-            <AssistantButton onPress={() => setShowAssistant(true)} />
-            
-            {/* Asistente modal */}
-            {showAssistant && (
-              <VirtualAssistant onClose={() => setShowAssistant(false)} />
-            )}
-        </View>
+                {/* Asistente modal */}
+                {showAssistant && (
+                    <VirtualAssistant onClose={() => setShowAssistant(false)} />
+                )}
+            </View>
+        </Provider>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -171,5 +189,17 @@ const styles = StyleSheet.create({
     lightText: {
         color: "black",
     },
+    menuButton: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 10,
+    },    
+    menuContainer: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 10,
+      },      
 });
 

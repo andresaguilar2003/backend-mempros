@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigation';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 // Configura el manejo de notificaciones
 Notifications.setNotificationHandler({
@@ -93,10 +94,12 @@ function MainApp() {
 // Envuelve la aplicación con el AuthProvider
 export default function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <MainApp />
-      </ThemeProvider>
-    </AuthProvider>
+    <PaperProvider> 
+      <AuthProvider>
+        <ThemeProvider>
+          <MainApp />
+        </ThemeProvider>
+      </AuthProvider>
+    </PaperProvider>
   );
 }
