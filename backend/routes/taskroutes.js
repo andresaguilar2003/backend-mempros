@@ -151,4 +151,41 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     }
 });
 
+// 🔹 Obtener tareas del día de hoy
+router.get("/today", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const tasks = await Task.find({
+            $and: [
+                {
+                    $or: [
+                        { userId: userId },
+                        { assignedTo: userId }
+                    ]
+                },
+                {
+                    date: {
+                        $gte: today,
+                        $lt: tomorrow
+                      }
+                }
+            ]
+        })
+        .populate("userId", "name")
+        .populate("assignedTo", "name");
+
+        res.json(tasks);
+    } catch (error) {
+        console.error("❌ Error al obtener tareas de hoy:", error.message);
+        res.status(500).json({ error: "Error al obtener tareas de hoy" });
+    }
+});
+
+
 module.exports = router;
