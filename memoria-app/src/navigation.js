@@ -10,6 +10,10 @@ import CalendarScreen from "./screens/CalendarScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import AchievementsScreen from './screens/AchievementsScreen';
+import MemoryGameScreen from './screens/MemoryGameScreen'; 
+import CambioCriterioScreen from './screens/CambioCriterioScreen';
+import ColorChallengeScreen from './screens/ColorChallengeScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -17,7 +21,7 @@ function AppNavigator() {
   const { user } = useContext(AuthContext);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName={user ? "Inicio" : "LoginScreen"}>
       {user ? (
         <>
           <Stack.Screen name="Inicio" component={HomeScreen} />
@@ -26,6 +30,10 @@ function AppNavigator() {
           <Stack.Screen name="Logros" component={AchievementsScreen} />
           <Stack.Screen name="KanbanScreen" component={KanbanScreen} options={{ title: "Estado de las tareas" }} />
           <Stack.Screen name="CalendarScreen" component={CalendarScreen} options={{ title: "Calendario" }} />
+          <Stack.Screen name="JuegoMemoria" component={MemoryGameScreen} options={{ title: 'Juego de Memoria' }} />
+          <Stack.Screen name="CambioCriterio" component={CambioCriterioScreen} options={{ title: 'Juego Cambio de Criterio' }} />
+          <Stack.Screen name="RetoColores" component={ColorChallengeScreen} options={{ title: 'Reto de Colores' }} />
+
         </>
       ) : (
         <>
@@ -36,5 +44,6 @@ function AppNavigator() {
     </Stack.Navigator>
   );
 }
+
 
 export default AppNavigator; // Asegúrate de exportar AppNavigator como default

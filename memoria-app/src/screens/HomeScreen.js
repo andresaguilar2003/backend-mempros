@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView,Modal, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from '../context/ThemeContext';
@@ -13,6 +13,8 @@ export default function HomeScreen() {
     const { theme, toggleTheme } = useTheme();
     const [showAssistant, setShowAssistant] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [showGamesModal, setShowGamesModal] = useState(false);
+
 
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
@@ -53,7 +55,10 @@ export default function HomeScreen() {
                             />
                         }
                     >
-                        {/* Los items del menú permanecen igual */}
+                        <Menu.Item onPress={handleLogout} title="Cerrar sesión" leadingIcon="logout" />
+                        <Menu.Item onPress={handleToggleTheme} title={`Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`} leadingIcon="theme-light-dark" />
+                        <Menu.Item onPress={handleNavigateLogros} title="Ver logros" leadingIcon="star" />
+                        <Menu.Item onPress={handleAssistant} title="Asistente virtual" leadingIcon="robot" />
                     </Menu>
                 </View>
                 
@@ -94,26 +99,72 @@ export default function HomeScreen() {
                     <View style={[styles.section, styles.exerciseSection]}>
                         <View style={styles.sectionHeader}>
                             <Text style={[styles.sectionTitle, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                                Juegos 🃏
-                            </Text>
-                            <Text style={[styles.sectionSubtitle, theme === 'dark' ? styles.darkSubtext : styles.lightSubtext]}>
-                                Elige entre diferentes juegos para mejorar tu memoria
+                                Ejercicios
                             </Text>
                         </View>
                         
-                        <TouchableOpacity 
-                            style={[styles.actionButton, styles.exerciseButton]}
-                            onPress={() => {}}
-                        >
-                            <View style={styles.buttonContent}>
-                                <Text style={styles.buttonText}>Explorar juegos</Text>
-                                <Text style={styles.buttonSubtext}>¡Mejora tu memoria jugando!</Text>
-                            </View>
-                            <Text style={styles.buttonIcon}>🏋️</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                        <View style={styles.buttonColumn}>
+                            <TouchableOpacity 
+                                style={[styles.actionButton, styles.exerciseButton, styles.fullWidthButton]}
+                                onPress={() => setShowGamesModal(true)}
+                            >
+                                <View style={styles.buttonContent}>
+                                    <Text style={styles.buttonText}>Juego</Text>
+                                    <Text style={styles.buttonSubtext}>Mejora tu memoria jugando</Text>
+                                </View>
+                                <Text style={styles.buttonIcon}>🎮</Text>
+                            </TouchableOpacity>
 
+                            <TouchableOpacity 
+                                style={[styles.actionButton, styles.exerciseButton, styles.fullWidthButton]}
+                                onPress={() => navigation.navigate('RetoColores')}
+                            >
+                                <View style={styles.buttonContent}>
+                                    <Text style={styles.buttonText}>Ejercicio evaluable</Text>
+                                    <Text style={styles.buttonSubtext}>Evalúa tu memoria y atención</Text>
+                                </View>
+                                <Text style={styles.buttonIcon}>📝</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <Modal visible={showGamesModal} transparent animationType="slide">
+                        <View style={styles.modalOverlay}>
+                            <View style={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Selecciona un juego</Text>
+                                <View style={styles.modalGameGrid}>
+                                    <TouchableOpacity onPress={() => {
+                                        setShowGamesModal(false);
+                                        navigation.navigate('JuegoMemoria');
+                                    }}>
+                                        <Image
+                                            source={require('../assests/memory-game.png')}
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>Juego de Memoria</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => {
+                                        setShowGamesModal(false);
+                                        navigation.navigate('CambioCriterio');
+                                    }}>
+                                        <Image
+                                            source={require('../assests/cambio-criterio.png')}
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>Cambio de Criterio</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <TouchableOpacity onPress={() => setShowGamesModal(false)} style={styles.closeButton}>
+                                    <Text style={{ color: 'white' }}>Cerrar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                </ScrollView>
                 {/* Asistente modal */}
                 {showAssistant && (
                     <VirtualAssistant onClose={() => setShowAssistant(false)} />
@@ -227,5 +278,58 @@ const styles = StyleSheet.create({
         top: 10,
         left: 10,
         zIndex: 1,
+    },
+    logoutText: {
+        fontSize: 16,
+        marginRight: 12,
+        alignSelf: 'center',
+      },
+      modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 20,
+        width: '85%',
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+    },
+    modalGameGrid: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginBottom: 20,
+    },
+    gameImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 12,
+        marginBottom: 8,
+    },
+    gameLabel: {
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    closeButton: {
+        backgroundColor: '#333',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },  
+    buttonColumn: {
+        flexDirection: 'column',
+        gap: 10,
+    },
+    fullWidthButton: {
+        width: '100%',
     },
 });

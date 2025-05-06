@@ -6,6 +6,8 @@ const os = require('os');
 const User = require('./models/User'); // Importa el modelo User
 
 
+
+
 dotenv.config();
 const app = express();
 
@@ -20,11 +22,17 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
+const memoryGameRoutes = require('./routes/memoryGameRoutes');
+app.use('/api/memory-game', memoryGameRoutes);
 const achievementRoutes = require("./routes/achievementRoutes");
 app.use("/api/achievements", achievementRoutes);
 const taskRoutes = require('./routes/taskroutes');
 app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', require("./routes/authRoutes"));
+const colorChallengeRoutes = require('./routes/colorChallengeRoutes');
+app.use('/api/color-challenge', colorChallengeRoutes);
+
+
 
 // Nuevo endpoint para guardar el token de notificaciones
 app.post('/api/save-token', async (req, res) => {

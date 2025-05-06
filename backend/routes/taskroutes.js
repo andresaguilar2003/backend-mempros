@@ -1,7 +1,7 @@
 // routes/taskRoutes.js
 const express = require("express");
 const Task = require("../models/task");
-const User = require("../models/User"); // 👇 NUEVO
+const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const { assignAchievementIfNeeded } = require("../utils/achievementManager");
 const router = express.Router();
