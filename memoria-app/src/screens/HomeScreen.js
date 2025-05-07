@@ -194,6 +194,17 @@ export default function HomeScreen() {
                                         />
                                         <Text style={styles.gameLabel}>Reflexión + Puzzle</Text>
                                     </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        setShowEvaluablesModal(false);
+                                        navigation.navigate('DesafioNinja');
+                                        }}>
+                                        <Image
+                                            source={require('../assests/desafio-ninja.png')} // asegúrate de tener esta imagen
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>Desafío Ninja</Text>
+                                    </TouchableOpacity>
                                 </View>
 
                                 <TouchableOpacity onPress={() => setShowEvaluablesModal(false)} style={styles.closeButton}>

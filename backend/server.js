@@ -33,6 +33,8 @@ const colorChallengeRoutes = require('./routes/colorChallengeRoutes');
 app.use('/api/color-challenge', colorChallengeRoutes);
 const reflectionPuzzleRoutes = require('./routes/reflectionPuzzleRoutes');
 app.use('/api/reflection-puzzle', reflectionPuzzleRoutes);
+const ninjaChallengeRoutes = require('./routes/ninjaChallengeRoutes');
+app.use('/api/ninja-challenge', ninjaChallengeRoutes);
 
 
 
