@@ -1,35 +1,63 @@
-const User = require('../models/User');
 const moment = require('moment');
+const User = require('../models/User');
 
-exports.updateUsage = async (req, res) => {
-  const userId = req.user.userId;
-  const minutesToAdd = req.body.minutes || 1; // frontend puede enviar cada 1 o 2 mins
-  const today = moment().format('YYYY-MM-DD');
-
+const getUsage = async (req, res) => {
   try {
+    const userId = req.user.userId;
     const user = await User.findById(userId);
+    const today = new Date().toISOString().split('T')[0];
 
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+    const usageToday = user.dailyUsage?.date === today
+      ? user.dailyUsage.minutesUsed
+      : 0;
 
-    if (user.dailyUsage?.date !== today) {
+    res.json({ minutesUsed: usageToday });
+  } catch (error) {
+    console.error('Error al obtener el uso diario:', error);
+    res.status(500).json({ error: 'Error al obtener el uso' });
+  }
+};
+
+
+
+
+const updateUsage = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId);
+    const { minutes } = req.body;
+
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!user.dailyUsage || user.dailyUsage.date !== today) {
       user.dailyUsage = {
         date: today,
-        minutesUsed: minutesToAdd
+        minutesUsed: minutes,
       };
     } else {
-      user.dailyUsage.minutesUsed += minutesToAdd;
+      user.dailyUsage.minutesUsed += minutes;
     }
 
     await user.save();
 
+    const nearingLimit = user.dailyUsage.minutesUsed >= 25 && user.dailyUsage.minutesUsed < 30;
+    const limitReached = user.dailyUsage.minutesUsed >= 30;
+
     res.json({
-      message: 'Tiempo actualizado correctamente',
+      message: "Tiempo actualizado",
       minutesUsed: user.dailyUsage.minutesUsed,
-      limitReached: user.dailyUsage.minutesUsed >= 30,
-      nearingLimit: user.dailyUsage.minutesUsed >= 25
+      nearingLimit,
+      limitReached,
     });
   } catch (err) {
-    console.error('Error al actualizar uso:', err);
-    res.status(500).json({ error: 'Error al actualizar uso diario' });
+    console.error("⛔ Error en updateUsage:", err);
+    res.status(500).json({ error: "Error al actualizar el uso" });
   }
+};
+
+
+
+module.exports = {
+  updateUsage,
+  getUsage,
 };

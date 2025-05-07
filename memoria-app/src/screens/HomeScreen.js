@@ -61,6 +61,7 @@ export default function HomeScreen() {
                         <Menu.Item onPress={handleToggleTheme} title={`Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`} leadingIcon="theme-light-dark" />
                         <Menu.Item onPress={handleNavigateLogros} title="Ver logros" leadingIcon="star" />
                         <Menu.Item onPress={handleAssistant} title="Asistente virtual" leadingIcon="robot" />
+                        <Menu.Item onPress={() => navigation.navigate('Uso')} title="Ver tiempo de uso" leadingIcon="clock-outline" />
                     </Menu>
                 </View>
                 

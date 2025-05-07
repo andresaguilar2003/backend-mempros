@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigation';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Provider as PaperProvider } from 'react-native-paper';
+import useUsageTracker from './utils/useUsageTracker';
 
 // Configura el manejo de notificaciones
 Notifications.setNotificationHandler({
@@ -46,11 +47,12 @@ async function requestUserPermission() {
 
 // Componente principal de la aplicación
 function MainApp() {
-  const { user } = useAuth(); // Obtén el usuario autenticado
+  const { user, token } = useAuth(); // Obtén el usuario autenticado
   const { themeStyles } = useTheme();
   const notificationListener = useRef(); // Listener para notificaciones en primer plano
   const responseListener = useRef(); // Listener para interacciones con notificaciones
 
+  useUsageTracker(token);
   useEffect(() => {
     // Solicita permisos para notificaciones
     requestUserPermission();

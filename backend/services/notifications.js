@@ -113,8 +113,9 @@ const getCronTime = (date) => {
     return `${minutes} ${hours} ${day} ${month} *`;
 };
 
-// Programar notificaciones diarias a las 8:00 AM
-cron.schedule('* * * * *', sendDailyNotifications, {
+// Programar notificaciones diarias a las 00:00 AM
+cron.schedule('0 0 * * *', sendDailyNotifications, {
+    scheduled: true,
     timezone: "Europe/Madrid"
 });
 
