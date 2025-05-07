@@ -15,6 +15,7 @@ import CambioCriterioScreen from './screens/CambioCriterioScreen';
 import ColorChallengeScreen from './screens/ColorChallengeScreen';
 import ReflectionPuzzleScreen from './screens/ReflexionPuzzleScreen'; 
 import NinjaChallengeScreen from './screens/NinjaChallengeScreen';
+import NinjaPathScreen from "./screens/NinjaPathScreen.js";
 
 
 const Stack = createStackNavigator();
@@ -37,6 +38,7 @@ function AppNavigator() {
           <Stack.Screen name="RetoColores" component={ColorChallengeScreen} options={{ title: 'Reto de Colores' }} />
           <Stack.Screen name="ReflexionPuzzle" component={ReflectionPuzzleScreen} options={{ title: 'Reflexión + Puzzle' }} />
           <Stack.Screen name="DesafioNinja" component={NinjaChallengeScreen} options={{ title: 'Desafío Ninja' }} />
+          <Stack.Screen name="CaminoNinja" component={NinjaPathScreen} options={{ title: 'Camino Ninja' }} />
         </>
       ) : (
         <>

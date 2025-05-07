@@ -205,6 +205,17 @@ export default function HomeScreen() {
                                         />
                                         <Text style={styles.gameLabel}>Desafío Ninja</Text>
                                     </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        setShowEvaluablesModal(false);
+                                        navigation.navigate('CaminoNinja');
+                                        }}>
+                                        <Image
+                                            source={require('../assests/camino-ninja.png')} // asegúrate de tener esta imagen
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>El Camino Ninja</Text>
+                                    </TouchableOpacity>
                                 </View>
 
                                 <TouchableOpacity onPress={() => setShowEvaluablesModal(false)} style={styles.closeButton}>
