@@ -13,6 +13,7 @@ import AchievementsScreen from './screens/AchievementsScreen';
 import MemoryGameScreen from './screens/MemoryGameScreen'; 
 import CambioCriterioScreen from './screens/CambioCriterioScreen';
 import ColorChallengeScreen from './screens/ColorChallengeScreen';
+import ReflectionPuzzleScreen from './screens/ReflexionPuzzleScreen';
 
 
 const Stack = createStackNavigator();
@@ -33,6 +34,7 @@ function AppNavigator() {
           <Stack.Screen name="JuegoMemoria" component={MemoryGameScreen} options={{ title: 'Juego de Memoria' }} />
           <Stack.Screen name="CambioCriterio" component={CambioCriterioScreen} options={{ title: 'Juego Cambio de Criterio' }} />
           <Stack.Screen name="RetoColores" component={ColorChallengeScreen} options={{ title: 'Reto de Colores' }} />
+          <Stack.Screen name="ReflexionPuzzle" component={ReflectionPuzzleScreen} options={{ title: 'Reflexión + Puzzle' }} />
 
         </>
       ) : (

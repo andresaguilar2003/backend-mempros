@@ -99,7 +99,7 @@ const ColorChallengeScreen = () => {
       if (!response.ok) throw new Error(result.error || 'Error al guardar resultado');
 
       Alert.alert('Juego terminado', completed ? '¡Completaste todos los niveles!' : 'Juego finalizado', [
-        { text: 'OK', onPress: () => resetGame() },
+        { text: 'OK', onPress: () => navigation.navigate('Inicio') },
       ]);
     } catch (error) {
       console.error('Error al guardar datos del juego:', error);

@@ -14,6 +14,8 @@ export default function HomeScreen() {
     const [showAssistant, setShowAssistant] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [showGamesModal, setShowGamesModal] = useState(false);
+    const [showEvaluablesModal, setShowEvaluablesModal] = useState(false);
+
 
 
     const openMenu = () => setMenuVisible(true);
@@ -117,7 +119,7 @@ export default function HomeScreen() {
 
                             <TouchableOpacity 
                                 style={[styles.actionButton, styles.exerciseButton, styles.fullWidthButton]}
-                                onPress={() => navigation.navigate('RetoColores')}
+                                onPress={() => setShowEvaluablesModal(true)} // nuevo estado
                             >
                                 <View style={styles.buttonContent}>
                                     <Text style={styles.buttonText}>Ejercicio evaluable</Text>
@@ -164,6 +166,43 @@ export default function HomeScreen() {
                             </View>
                         </View>
                     </Modal>
+                    <Modal visible={showEvaluablesModal} transparent animationType="slide">
+                        <View style={styles.modalOverlay}>
+                            <View style={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Selecciona un ejercicio evaluable</Text>
+                                <View style={styles.modalGameGrid}>
+                                    <TouchableOpacity onPress={() => {
+                                        setShowEvaluablesModal(false);
+                                        navigation.navigate('RetoColores');
+                                    }}>
+                                        <Image
+                                            source={require('../assests/reto-colores.png')} // cambia si no tienes esta imagen
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>Reto de Colores</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => {
+                                        setShowEvaluablesModal(false);
+                                        navigation.navigate('ReflexionPuzzle');
+                                    }}>
+                                        <Image
+                                            source={require('../assests/reflexion-puzzle.png')} // cambia si no tienes esta imagen
+                                            style={styles.gameImage}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.gameLabel}>Reflexión + Puzzle</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <TouchableOpacity onPress={() => setShowEvaluablesModal(false)} style={styles.closeButton}>
+                                    <Text style={{ color: 'white' }}>Cerrar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+
                 </ScrollView>
                 {/* Asistente modal */}
                 {showAssistant && (

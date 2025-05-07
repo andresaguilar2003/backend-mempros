@@ -31,6 +31,9 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', require("./routes/authRoutes"));
 const colorChallengeRoutes = require('./routes/colorChallengeRoutes');
 app.use('/api/color-challenge', colorChallengeRoutes);
+const reflectionPuzzleRoutes = require('./routes/reflectionPuzzleRoutes');
+app.use('/api/reflection-puzzle', reflectionPuzzleRoutes);
+
 
 
 
