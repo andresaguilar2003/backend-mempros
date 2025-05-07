@@ -94,7 +94,7 @@ export default function AddTaskScreen({ route }) {
                 // Oculta el popup después de 4 segundos
                 setTimeout(() => {
                   setShowPopup(false);
-                }, 7000);
+                }, 3000);
               }
             } catch (error) {
               console.error("❌ Error al verificar logros:", error);

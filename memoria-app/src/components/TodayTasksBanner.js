@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, Animated, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import moment from 'moment';
 import { AuthContext } from '../context/AuthContext';
 
@@ -29,9 +29,8 @@ const TodayTasksBanner = () => {
     fetchTasks();
   }, [token]);
 
-  // Auto scroll efecto carrusel
   useEffect(() => {
-    if (todayTasks.length === 0) return;
+    if (todayTasks.length <= 1) return; // no hace falta auto-scroll si hay 0 o 1 tareas
 
     const interval = setInterval(() => {
       scrollIndex.current = (scrollIndex.current + 1) % todayTasks.length;
@@ -39,35 +38,42 @@ const TodayTasksBanner = () => {
         index: scrollIndex.current,
         animated: true,
       });
-    }, 3000); // cambia cada 3 segundos
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [todayTasks]);
-
-  if (!todayTasks.length) return null;
 
   return (
     <View style={styles.bannerWrapper}>
       <Text style={styles.title}>🗓️ TAREAS DIARIAS</Text>
       <View style={styles.bannerContainer}>
-        <FlatList
-          ref={flatListRef}
-          data={todayTasks}
-          horizontal
-          keyExtractor={(item, index) => item._id || index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.taskCard}>
-              <Text style={styles.taskTitle}>{item.title}</Text>
-              <Text style={styles.taskTime}>⏰ {item.time}</Text>
-            </View>
-          )}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-        />
+        {todayTasks.length > 0 ? (
+          <FlatList
+            ref={flatListRef}
+            data={todayTasks}
+            horizontal
+            keyExtractor={(item, index) => item._id || index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.taskCard}>
+                <Text style={styles.taskTitle}>{item.title}</Text>
+                <Text style={styles.taskTime}>⏰ {item.time}</Text>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+          />
+        ) : (
+          <View style={styles.taskCard}>
+            <Text style={styles.taskTitle}>🎉 No hay tareas para hoy</Text>
+            <Text style={styles.taskTime}>Tómate un descanso o crea una nueva</Text>
+          </View>
+        )}
       </View>
     </View>
   );
 };
+
+export default TodayTasksBanner;
 
 const styles = StyleSheet.create({
   bannerWrapper: {
@@ -103,11 +109,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
+    textAlign: 'center',
   },
   taskTime: {
     fontSize: 14,
     color: '#666',
+    textAlign: 'center',
   },
 });
-
-export default TodayTasksBanner;

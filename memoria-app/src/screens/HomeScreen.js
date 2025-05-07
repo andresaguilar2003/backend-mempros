@@ -111,8 +111,8 @@ export default function HomeScreen() {
                                 onPress={() => setShowGamesModal(true)}
                             >
                                 <View style={styles.buttonContent}>
-                                    <Text style={styles.buttonText}>Juego</Text>
-                                    <Text style={styles.buttonSubtext}>Mejora tu memoria jugando</Text>
+                                    <Text style={styles.buttonText}>Juegos</Text>
+                                    <Text style={styles.buttonSubtext}>¡Mejora tu memoria jugando!</Text>
                                 </View>
                                 <Text style={styles.buttonIcon}>🎮</Text>
                             </TouchableOpacity>
@@ -122,8 +122,8 @@ export default function HomeScreen() {
                                 onPress={() => setShowEvaluablesModal(true)} // nuevo estado
                             >
                                 <View style={styles.buttonContent}>
-                                    <Text style={styles.buttonText}>Ejercicio evaluable</Text>
-                                    <Text style={styles.buttonSubtext}>Evalúa tu memoria y atención</Text>
+                                    <Text style={styles.buttonText}>Ejercicios evaluables</Text>
+                                    <Text style={styles.buttonSubtext}>Evalúa tu memoria</Text>
                                 </View>
                                 <Text style={styles.buttonIcon}>📝</Text>
                             </TouchableOpacity>
