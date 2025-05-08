@@ -72,9 +72,9 @@ export default function LoginScreen() {
                 style={styles.therapistButton}
                 onPress={() => navigation.navigate("TherapistCodeScreen")}
             >
+                <Ionicons name="heart-half-outline" size={16} color="white" style={styles.icon} />
                 <Text style={styles.therapistButtonText}>Acceso Terapeutas</Text>
             </TouchableOpacity>
-
             <Text style={styles.title}>Iniciar Sesión</Text>
 
             <TextInput
@@ -143,10 +143,13 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         right: 20,
-        backgroundColor: '#6A5ACD', // Color lila profesional
+        backgroundColor: '#6A5ACD',
         paddingVertical: 8,
-        paddingHorizontal: 12,
+        paddingHorizontal: 15,
         borderRadius: 20,
+        flexDirection: 'row',  // Esto alinea los elementos en fila
+        alignItems: 'center',  // Esto centra verticalmente los elementos
+        justifyContent: 'center', // Esto centra horizontalmente
         borderWidth: 1,
         borderColor: '#FFF',
         shadowColor: '#000',
@@ -154,12 +157,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 4,
         elevation: 3,
-        transform: [{ scale: 1 }],
     },
     therapistButtonText: {
         color: 'white',
         fontWeight: '600',
         fontSize: 14,
+        marginLeft: 5,  // Espacio entre el ícono y el texto
     },
     therapistButtonPressed: {
         transform: [{ scale: 0.95 }],
