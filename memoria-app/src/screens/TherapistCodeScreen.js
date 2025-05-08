@@ -44,8 +44,8 @@ export default function TherapistCodeScreen() {
   };
 
   const handleSelectTherapist = (therapist) => {
-    navigation.navigate("TherapistLoginScreen", { therapist }); // Lo definiremos luego
-  };
+    navigation.navigate("TherapistDashboardScreen", { therapist });
+  };  
 
   return (
     <View style={styles.container}>
