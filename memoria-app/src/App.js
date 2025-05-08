@@ -7,6 +7,7 @@ import AppNavigator from './navigation';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Provider as PaperProvider } from 'react-native-paper';
 import useUsageTracker from './utils/useUsageTracker';
+import { PMCQProvider } from './context/PMCQContext';
 
 // Configura el manejo de notificaciones
 Notifications.setNotificationHandler({
@@ -93,13 +94,14 @@ function MainApp() {
   );
 }
 
-// Envuelve la aplicación con el AuthProvider
 export default function App() {
   return (
     <PaperProvider> 
       <AuthProvider>
         <ThemeProvider>
-          <MainApp />
+          <PMCQProvider> 
+            <MainApp />
+          </PMCQProvider>
         </ThemeProvider>
       </AuthProvider>
     </PaperProvider>

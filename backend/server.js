@@ -39,8 +39,8 @@ const ninjaPathRoutes = require('./routes/ninjaPathRoutes');
 app.use('/api/ninja-path', ninjaPathRoutes);
 const usageRoutes = require('./routes/usageRoutes');
 app.use('/api/usage', usageRoutes);
-
-
+const pmcqRoutes = require('./routes/pmcq');
+app.use('/api/pmcq', pmcqRoutes);
 
 
 

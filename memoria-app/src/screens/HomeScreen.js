@@ -6,6 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import VirtualAssistant from '../components/VirtualAssistant';
 import { Menu, Provider, IconButton } from 'react-native-paper';
 import TodayTasksBanner from '../components/TodayTasksBanner';
+import { usePMCQ } from '../context/PMCQContext';
+import PMCQScreen from './PmcqScreen';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
@@ -16,7 +18,7 @@ export default function HomeScreen() {
     const [showGamesModal, setShowGamesModal] = useState(false);
     const [showEvaluablesModal, setShowEvaluablesModal] = useState(false);
 
-
+    const { hasCompletedPMCQ } = usePMCQ();
 
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
@@ -40,6 +42,14 @@ export default function HomeScreen() {
         closeMenu();
         logout();
     };
+
+    if (hasCompletedPMCQ === null) {
+        return null; // para debug visual
+      }
+
+    if (!hasCompletedPMCQ) {
+        return <PMCQScreen />; 
+    }
 
     return (
         <Provider>
