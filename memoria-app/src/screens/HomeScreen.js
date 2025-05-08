@@ -109,10 +109,21 @@ export default function HomeScreen() {
                     </View>
                     
                     {/* Sección de Ejercicios con diseño mejorado */}
-                    <View style={[styles.section, styles.exerciseSection]}>
+                    <View style={[styles.section, styles.exerciseSection, {alignItems: 'center'}]}>
                         <View style={styles.sectionHeader}>
-                            <Text style={[styles.sectionTitle, theme === 'dark' ? styles.darkText : styles.lightText]}>
-                                Ejercicios
+                            <Text style={[
+                                styles.sectionTitle, 
+                                theme === 'dark' ? styles.darkText : styles.lightText,
+                                {
+                                    fontSize: 22, // Tamaño un poco más grande
+                                    fontWeight: 'bold', // Texto en negrita
+                                    color: '#6A5ACD', // Color lila (puedes cambiarlo)
+                                    textAlign: 'center', // Texto centrado
+                                    paddingVertical: 8, // Espaciado vertical
+                                    textTransform: 'uppercase' // Todo en mayúsculas (opcional)
+                                }
+                            ]}>
+                                ¡Mejora y evalúa tu memoria prospectiva!
                             </Text>
                         </View>
                         
@@ -270,10 +281,15 @@ const styles = StyleSheet.create({
         marginBottom: 28,
     },
     exerciseSection: {
-        backgroundColor: '#f0f4ff', // Fondo claro azulado en modo claro
-        borderRadius: 16,
-        padding: 16,
-        marginTop: 8,
+        backgroundColor: '#F0F8FF', // Fondo azul claro
+        borderRadius: 9, // Bordes redondeados
+        padding: 11, // Espaciado interno
+        marginVertical: 10, // Margen vertical
+        shadowColor: '#000', // Sombra para efecto elevado
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 0, // Para Android
     },
     // Encabezado de sección
     sectionHeader: {
