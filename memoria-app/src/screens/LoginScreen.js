@@ -4,6 +4,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState("");
@@ -67,6 +68,13 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity 
+                style={styles.therapistButton}
+                onPress={() => navigation.navigate("TherapistCodeScreen")}
+            >
+                <Text style={styles.therapistButtonText}>Acceso Terapeutas</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Iniciar Sesión</Text>
 
             <TextInput
@@ -91,11 +99,6 @@ export default function LoginScreen() {
 
             <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
                 <Text style={styles.link}>¿No tienes cuenta? Regístrate</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("TherapistCodeScreen")}>
-                <Text style={[styles.link, { marginTop: 20, color: "#007AFF" }]}>
-                    Acceder como terapeuta
-                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -135,5 +138,31 @@ const styles = StyleSheet.create({
         marginTop: 15,
         textAlign: "center",
         color: "#007bff",
+    },
+    therapistButton: {
+        position: 'absolute',
+        top: 40,
+        right: 20,
+        backgroundColor: '#6A5ACD', // Color lila profesional
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#FFF',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+        transform: [{ scale: 1 }],
+    },
+    therapistButtonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
+    },
+    therapistButtonPressed: {
+        transform: [{ scale: 0.95 }],
+        opacity: 0.8,
     },
 });
