@@ -41,6 +41,8 @@ const usageRoutes = require('./routes/usageRoutes');
 app.use('/api/usage', usageRoutes);
 const pmcqRoutes = require('./routes/pmcq');
 app.use('/api/pmcq', pmcqRoutes);
+const therapistRoutes = require('./routes/therapist');
+app.use('/api/therapists', therapistRoutes);
 
 
 

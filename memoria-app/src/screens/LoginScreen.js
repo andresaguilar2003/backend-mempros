@@ -92,6 +92,11 @@ export default function LoginScreen() {
             <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
                 <Text style={styles.link}>¿No tienes cuenta? Regístrate</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("TherapistCodeScreen")}>
+                <Text style={[styles.link, { marginTop: 20, color: "#007AFF" }]}>
+                    Acceder como terapeuta
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }

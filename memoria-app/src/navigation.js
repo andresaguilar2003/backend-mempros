@@ -17,6 +17,7 @@ import ReflectionPuzzleScreen from './screens/ReflexionPuzzleScreen';
 import NinjaChallengeScreen from './screens/NinjaChallengeScreen';
 import NinjaPathScreen from "./screens/NinjaPathScreen.js";
 import UsageScreen from './screens/UsageScreen';
+import TherapistCodeScreen from "./screens/TherapistCodeScreen";
 
 
 const Stack = createStackNavigator();
@@ -45,6 +46,7 @@ function AppNavigator() {
       ) : (
         <>
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: "Iniciar Sesión" }} />
+          <Stack.Screen name="TherapistCodeScreen" component={TherapistCodeScreen} options={{ headerTitle: "Acceso terapeuta" }} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: "Registrarse" }} />
         </>
       )}
