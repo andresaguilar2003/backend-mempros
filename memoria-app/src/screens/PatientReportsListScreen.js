@@ -7,7 +7,7 @@ export default function PatientReportsListScreen({ route, navigation }) {
   const reports = [
     { name: "PMCQ", route: "PatientReportScreen" },
     { name: "Reto de colores", route: "ColorChallengeReport" },
-    { name: "Desafío de Piezas y Respuestas", route: null },
+    { name: "Desafío de Piezas y Respuestas", route: "ReflexionPuzzleReport" },
     { name: "Desafío Ninja: De la Planificación a la Acción", route: null },
     { name: "El Camino Ninja: Construyendo mi Futuro", route: null },
     { name: "Tiempo de uso", route: null },

@@ -22,6 +22,7 @@ import TherapistDashboardScreen from "./screens/TherapistDashboardScreen";
 import PatientReportScreen from "./screens/PatientReportScreen";
 import PatientReportsListScreen from "./screens/PatientReportsListScreen";
 import ColorChallengeReportScreen from "./screens/ColorChallengeReportScreen";
+import ReflexionPuzzleReportScreen from "./screens/ReflexionPuzzleReportScreen";
 
 const Stack = createStackNavigator();
 
@@ -54,7 +55,8 @@ function AppNavigator() {
           <Stack.Screen name="TherapistDashboardScreen" component={TherapistDashboardScreen} options={{ title: "Pacientes" }} />
           <Stack.Screen name="PatientReportScreen" component={PatientReportScreen} options={{ title: "PMCQ" }} />
           <Stack.Screen name="PatientReportsList" component={PatientReportsListScreen} noptions={{ title: "Informes del Paciente" }} />
-          <Stack.Screen name="ColorChallengeReport" component={ColorChallengeReportScreen} />
+          <Stack.Screen name="ColorChallengeReport" component={ColorChallengeReportScreen} options={{ title: "Reto de Colores" }}/>
+          <Stack.Screen name="ReflexionPuzzleReport" component={ReflexionPuzzleReportScreen} options={{ title: "Desafío de Piezas y Respuestas" }} />
         </>
       )}
     </Stack.Navigator>
