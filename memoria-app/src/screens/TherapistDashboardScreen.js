@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  View, Text, FlatList, ActivityIndicator, StyleSheet
+  View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function TherapistDashboardScreen({ route }) {
   const { therapist } = route.params;
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -34,10 +36,15 @@ export default function TherapistDashboardScreen({ route }) {
         data={patients}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <View style={styles.patientCard}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("PatientReportsList", { patientId: item._id, patientName: item.name })
+            }
+            style={styles.patientCard}
+          >
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.email}>{item.email}</Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -45,15 +52,14 @@ export default function TherapistDashboardScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1 },
-  title: { fontSize: 20, fontWeight: "bold", marginBottom: 16 },
+  container: { padding: 16 },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   patientCard: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
+    backgroundColor: "#f0f0f0",
     padding: 12,
     marginBottom: 10,
+    borderRadius: 8
   },
-  name: { fontSize: 16, fontWeight: "600" },
-  email: { fontSize: 14, color: "#555" },
+  name: { fontSize: 18, fontWeight: "600" },
+  email: { fontSize: 14, color: "#666" },
 });

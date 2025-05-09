@@ -19,7 +19,8 @@ import NinjaPathScreen from "./screens/NinjaPathScreen.js";
 import UsageScreen from './screens/UsageScreen';
 import TherapistCodeScreen from "./screens/TherapistCodeScreen";
 import TherapistDashboardScreen from "./screens/TherapistDashboardScreen";
-
+import PatientReportScreen from "./screens/PatientReportScreen";
+import PatientReportsListScreen from "./screens/PatientReportsListScreen";
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,8 @@ function AppNavigator() {
           <Stack.Screen name="TherapistCodeScreen" component={TherapistCodeScreen} options={{ headerTitle: "Acceso terapeuta" }} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: "Registrarse" }} />
           <Stack.Screen name="TherapistDashboardScreen" component={TherapistDashboardScreen} options={{ title: "Pacientes" }} />
+          <Stack.Screen name="PatientReportScreen" component={PatientReportScreen} options={{ title: "PMCQ" }} />
+          <Stack.Screen name="PatientReportsList" component={PatientReportsListScreen} noptions={{ title: "Informes del Paciente" }} />
         </>
       )}
     </Stack.Navigator>
