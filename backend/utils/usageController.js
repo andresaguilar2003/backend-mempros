@@ -1,5 +1,6 @@
 const moment = require('moment');
 const User = require('../models/User');
+const DailyUsageLog = require('../models/DailyUsageLog');
 
 const getUsage = async (req, res) => {
   try {
@@ -19,16 +20,16 @@ const getUsage = async (req, res) => {
 };
 
 
-
-
 const updateUsage = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const user = await User.findById(userId);
     const { minutes } = req.body;
-
     const today = new Date().toISOString().split('T')[0];
 
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Actualiza el campo actual
     if (!user.dailyUsage || user.dailyUsage.date !== today) {
       user.dailyUsage = {
         date: today,
@@ -40,20 +41,27 @@ const updateUsage = async (req, res) => {
 
     await user.save();
 
-    const nearingLimit = user.dailyUsage.minutesUsed >= 25 && user.dailyUsage.minutesUsed < 30;
-    const limitReached = user.dailyUsage.minutesUsed >= 30;
+    // Actualiza o inserta el historial
+    await DailyUsageLog.findOneAndUpdate(
+      { user: userId, date: today },
+      { $inc: { minutesUsed: minutes } },
+      { upsert: true, new: true }
+    );
+
+    const totalToday = user.dailyUsage.minutesUsed;
 
     res.json({
       message: "Tiempo actualizado",
-      minutesUsed: user.dailyUsage.minutesUsed,
-      nearingLimit,
-      limitReached,
+      minutesUsed: totalToday,
+      nearingLimit: totalToday >= 25 && totalToday < 30,
+      limitReached: totalToday >= 30,
     });
   } catch (err) {
     console.error("⛔ Error en updateUsage:", err);
     res.status(500).json({ error: "Error al actualizar el uso" });
   }
 };
+
 
 
 

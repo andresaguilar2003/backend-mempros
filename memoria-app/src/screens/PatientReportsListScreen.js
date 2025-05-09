@@ -10,7 +10,7 @@ export default function PatientReportsListScreen({ route, navigation }) {
     { name: "Desafío de Piezas y Respuestas", route: "ReflexionPuzzleReport" },
     { name: "Desafío Ninja: De la Planificación a la Acción", route: "NinjaChallengeReport" },
     { name: "El Camino Ninja: Construyendo mi Futuro", route: "NinjaPathReport" },
-    { name: "Tiempo de uso", route: null },
+    { name: "Tiempo de uso", route: "UsageReport" },
   ];
 
   return (

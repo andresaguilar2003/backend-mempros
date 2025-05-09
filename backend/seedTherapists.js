@@ -31,6 +31,12 @@ const seedTherapists = async () => {
         avatarUrl: "",
         users: users.slice(0, 1).map((u) => u._id),
       },
+      {
+        name: "Dr. López",
+        code: "123",
+        avatarUrl: "",
+        users: users.slice(3).map((u) => u._id),
+      },
     ];
 
     await Therapist.deleteMany(); // limpia anteriores si lo deseas
