@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 const COLORS = ['red', 'green', 'blue', 'yellow'];
 
@@ -14,6 +15,7 @@ const ColorChallengeScreen = () => {
   const [isDisplaying, setIsDisplaying] = useState(false);
   const [activeColor, setActiveColor] = useState(null);
   const [shouldRepeat, setShouldRepeat] = useState(false); 
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (!shouldRepeat) {
@@ -63,7 +65,6 @@ const ColorChallengeScreen = () => {
         setErrorsPerLevel(prev => [...prev, { level, errors: currentMistakes.current }]);
         endGame();
       } else {
-        Alert.alert('Error', 'Color incorrecto. Repitiendo secuencia...');
         setUserInput([]);
         setShouldRepeat(true);
       }
