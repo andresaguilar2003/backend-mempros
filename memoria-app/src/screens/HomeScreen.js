@@ -17,6 +17,11 @@ export default function HomeScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
     const [showGamesModal, setShowGamesModal] = useState(false);
     const [showEvaluablesModal, setShowEvaluablesModal] = useState(false);
+    const [showColorInfoModal, setShowColorInfoModal] = useState(false);
+    const [showPuzzleInfoModal, setShowPuzzleInfoModal] = useState(false);
+    const [showDesafioInfoModal, setShowDesafioInfoModal] = useState(false);
+    const [showCaminoInfoModal, setShowCaminoInfoModal] = useState(false);
+
 
     const { hasCompletedPMCQ } = usePMCQ();
 
@@ -204,63 +209,149 @@ export default function HomeScreen() {
                         </View>
                     </Modal>
                     <Modal visible={showEvaluablesModal} transparent animationType="slide">
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalContainer}>
-                                <Text style={styles.modalTitle}>Selecciona un ejercicio evaluable</Text>
-                                <View style={styles.modalGameGrid}>
-                                    <TouchableOpacity onPress={() => {
-                                        setShowEvaluablesModal(false);
-                                        navigation.navigate('RetoColores');
-                                    }}>
-                                        <Image
-                                            source={require('../assests/reto-colores.png')} // cambia si no tienes esta imagen
-                                            style={styles.gameImage}
-                                            resizeMode="contain"
-                                        />
-                                        <Text style={styles.gameLabel}>Reto de Colores</Text>
-                                    </TouchableOpacity>
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Selecciona un ejercicio evaluable</Text>
+                            <View style={styles.modalGameGrid}>
+                                <TouchableOpacity onPress={() => {
+                                    setShowEvaluablesModal(false);
+                                    setShowColorInfoModal(true);
+                                }}>
+                                    <Image source={require('../assests/reto-colores.png')} style={styles.gameImage} resizeMode="contain" />
+                                    <Text style={styles.gameLabel}>Reto de Colores</Text>
+                                </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => {
-                                        setShowEvaluablesModal(false);
-                                        navigation.navigate('ReflexionPuzzle');
-                                    }}>
-                                        <Image
-                                            source={require('../assests/reflexion-puzzle.png')} // cambia si no tienes esta imagen
-                                            style={styles.gameImage}
-                                            resizeMode="contain"
-                                        />
-                                        <Text style={styles.gameLabel}>Reflexión + Puzzle</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        setShowEvaluablesModal(false);
-                                        navigation.navigate('DesafioNinja');
-                                        }}>
-                                        <Image
-                                            source={require('../assests/desafio-ninja.png')} // asegúrate de tener esta imagen
-                                            style={styles.gameImage}
-                                            resizeMode="contain"
-                                        />
-                                        <Text style={styles.gameLabel}>Desafío Ninja</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        setShowEvaluablesModal(false);
-                                        navigation.navigate('CaminoNinja');
-                                        }}>
-                                        <Image
-                                            source={require('../assests/camino-ninja.png')} // asegúrate de tener esta imagen
-                                            style={styles.gameImage}
-                                            resizeMode="contain"
-                                        />
-                                        <Text style={styles.gameLabel}>El Camino Ninja</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                <TouchableOpacity onPress={() => {
+                                    setShowEvaluablesModal(false);
+                                    setShowPuzzleInfoModal(true);
+                                }}>
+                                    <Image source={require('../assests/reflexion-puzzle.png')} style={styles.gameImage} resizeMode="contain" />
+                                    <Text style={styles.gameLabel}>Piezas y Respuestas</Text>
+                                </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => setShowEvaluablesModal(false)} style={styles.closeButton}>
-                                    <Text style={{ color: 'white' }}>Cerrar</Text>
+                                <TouchableOpacity onPress={() => {
+                                    setShowEvaluablesModal(false);
+                                    setShowDesafioInfoModal(true);
+                                }}>
+                                    <Image source={require('../assests/desafio-ninja.png')} style={styles.gameImage} resizeMode="contain" />
+                                    <Text style={styles.gameLabel}>Desafío Ninja</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => {
+                                    setShowEvaluablesModal(false);
+                                    setShowCaminoInfoModal(true);
+                                }}>
+                                    <Image source={require('../assests/camino-ninja.png')} style={styles.gameImage} resizeMode="contain" />
+                                    <Text style={styles.gameLabel}>El Camino Ninja</Text>
                                 </TouchableOpacity>
                             </View>
+
+                            <TouchableOpacity onPress={() => setShowEvaluablesModal(false)} style={styles.closeButton}>
+                                <Text style={{ color: 'white' }}>Cerrar</Text>
+                            </TouchableOpacity>
                         </View>
-                    </Modal>
+                    </View>
+                </Modal>
+
+                {/* Modal para Reto de Colores */}
+                <Modal visible={showColorInfoModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                            <Text style={styles.modalDescription}>
+                                🔸 Qué es: Es un juego que consiste en repetir una secuencia de luces de colores en el mismo orden en que aparece. Es como el Simon.{"\n\n"}
+                                🔸 Funcionamiento: El juego presenta cuatro botones de colores (rojo, verde, azul y amarillo). El juego inicia mostrando una secuencia de luces que tú debes repetir. Puedes fallar una vez por nivel, pero si fallas dos veces en el mismo nivel pierdes. Hay un total de siete niveles.
+                            </Text>
+                            <TouchableOpacity style={styles.playButton} onPress={() => {
+                                setShowColorInfoModal(false);
+                                navigation.navigate('RetoColores');
+                            }}>
+                                <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => setShowColorInfoModal(false)} 
+                                style={styles.backArrow}
+                            >
+                                <Text style={styles.backArrowText}>←</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* Modal para Piezas y Respuestas */}
+                <Modal visible={showPuzzleInfoModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                            <Text style={styles.modalDescription}>
+                                🔸 Qué es: Es una tarea que combina dos desafíos: primero, responder a una pregunta personal, y luego, completar una sopa de letras.{"\n\n"}
+                                🔸 Funcionamiento: Primero se plantea una pregunta reflexiva. Luego haces una sopa de letras mientras piensas tu respuesta. Al terminar, deberás dar tu respuesta. Una forma divertida de entrenar memoria y reflexión.
+                            </Text>
+                            <TouchableOpacity style={styles.playButton} onPress={() => {
+                                setShowPuzzleInfoModal(false);
+                                navigation.navigate('ReflexionPuzzle');
+                            }}>
+                                <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => setShowPuzzleInfoModal(false)} 
+                                style={styles.backArrow}
+                            >
+                                <Text style={styles.backArrowText}>←</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* Modal para Desafío Ninja */}
+                <Modal visible={showDesafioInfoModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                            <Text style={styles.modalDescription}>
+                                🔸 Qué es: Un ejercicio interactivo para mejorar tus habilidades de planificación y organización.{"\n\n"}
+                                🔸 Funcionamiento: En cada escenario, se te presenta una situación (como prepararte para un viaje). Debes elegir las 3 acciones correctas entre 5 opciones. Las acciones incorrectas deben ser descartadas.
+                            </Text>
+                            <TouchableOpacity style={styles.playButton} onPress={() => {
+                                setShowDesafioInfoModal(false);
+                                navigation.navigate('DesafioNinja');
+                            }}>
+                                <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => setShowDesafioInfoModal(false)} 
+                                style={styles.backArrow}
+                            >
+                                <Text style={styles.backArrowText}>←</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* Modal para El Camino Ninja */}
+                <Modal visible={showCaminoInfoModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                            <Text style={styles.modalDescription}>
+                                🔸 Qué es: Una actividad reflexiva donde defines tus metas a futuro.{"\n\n"}
+                                🔸 Funcionamiento: Piensa en lo que te gustaría alcanzar en 1 año, en 5 años y a largo plazo. Escribe tus metas personales. Ideal para conectar con tu propósito y planificar tu futuro.
+                            </Text>
+                            <TouchableOpacity style={styles.playButton} onPress={() => {
+                                setShowCaminoInfoModal(false);
+                                navigation.navigate('CaminoNinja');
+                            }}>
+                                <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => setShowCaminoInfoModal(false)} 
+                                style={styles.backArrow}
+                            >
+                                <Text style={styles.backArrowText}>←</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
                 </ScrollView>
                 {/* Asistente modal */}
@@ -435,4 +526,37 @@ const styles = StyleSheet.create({
     fullWidthButton: {
         width: '100%',
     },
+    modalDescription: {
+    fontSize: 16,
+    lineHeight: 22,
+    textAlign: 'left',
+    marginBottom: 20,
+    color: '#333',
+    },
+    playButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 15,
+    },
+
+    playButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    },
+    backArrow: {
+    position: 'absolute',
+    top: -15,
+    left: 10,
+    padding: 10,
+    zIndex: 1,
+    },
+
+    backArrowText: {
+    fontSize: 50,
+    color: '#333',
+    },
+
 });

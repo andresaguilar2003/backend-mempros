@@ -45,7 +45,7 @@ function AppNavigator() {
           <Stack.Screen name="JuegoMemoria" component={MemoryGameScreen} options={{ title: 'Juego de Memoria' }} />
           <Stack.Screen name="CambioCriterio" component={CambioCriterioScreen} options={{ title: 'Juego Cambio de Criterio' }} />
           <Stack.Screen name="RetoColores" component={ColorChallengeScreen} options={{ title: 'Reto de Colores' }} />
-          <Stack.Screen name="ReflexionPuzzle" component={ReflectionPuzzleScreen} options={{ title: 'Reflexión + Puzzle' }} />
+          <Stack.Screen name="ReflexionPuzzle" component={ReflectionPuzzleScreen} options={{ title: 'Desafío de Piezas y Respuestas' }} />
           <Stack.Screen name="DesafioNinja" component={NinjaChallengeScreen} options={{ title: 'Desafío Ninja' }} />
           <Stack.Screen name="CaminoNinja" component={NinjaPathScreen} options={{ title: 'Camino Ninja' }} />
           <Stack.Screen name="Uso" component={UsageScreen} />
