@@ -285,10 +285,6 @@ const ReflectionPuzzleScreen = () => {
           <Text style={{ fontSize: 16, marginBottom: 10 }}>
             Palabras encontradas: {foundWords.length} / {VALID_WORDS.length}
           </Text>
-
-          <TouchableOpacity onPress={() => setSelectedCoords([])} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>Borrar selección</Text>
-          </TouchableOpacity>
         </>
       )}
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView,Modal, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView,Modal, Image, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from '../context/ThemeContext';
@@ -22,6 +22,14 @@ export default function HomeScreen() {
 
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
+
+    const showHelpInfo = () => {
+        Alert.alert(
+        "¿Qué significan estas secciones?",
+        "🕹️ Los juegos son ejercicios no evaluables. Están diseñados para entretenerte mientras fortaleces tu memoria prospectiva.\n\n📝 Los ejercicios evaluables sí serán revisados por tu terapeuta. ¡Haz tu mejor esfuerzo!",
+        [{ text: "Entendido", style: "default" }]
+        );
+    };
 
     const handleNavigateLogros = () => {
         closeMenu();
@@ -110,21 +118,28 @@ export default function HomeScreen() {
                     
                     {/* Sección de Ejercicios con diseño mejorado */}
                     <View style={[styles.section, styles.exerciseSection, {alignItems: 'center'}]}>
-                        <View style={styles.sectionHeader}>
+                        <View style={[styles.sectionHeader, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
                             <Text style={[
-                                styles.sectionTitle, 
+                                styles.sectionTitle,
                                 theme === 'dark' ? styles.darkText : styles.lightText,
                                 {
-                                    fontSize: 22, // Tamaño un poco más grande
-                                    fontWeight: 'bold', // Texto en negrita
-                                    color: '#6A5ACD', // Color lila (puedes cambiarlo)
-                                    textAlign: 'center', // Texto centrado
-                                    paddingVertical: 8, // Espaciado vertical
-                                    textTransform: 'uppercase' // Todo en mayúsculas (opcional)
+                                fontSize: 22,
+                                fontWeight: 'bold',
+                                color: '#6A5ACD',
+                                textAlign: 'center',
+                                paddingVertical: 8,
+                                textTransform: 'uppercase'
                                 }
-                            ]}>
+                                ]}>
                                 ¡Mejora y evalúa tu memoria prospectiva!
-                            </Text>
+                                </Text>
+                                <IconButton
+                                icon="help-circle"
+                                size={24}
+                                onPress={showHelpInfo}
+                                style={{ marginLeft: 8 }}
+                                accessibilityLabel="Información sobre juegos y ejercicios evaluables"
+                            />
                         </View>
                         
                         <View style={styles.buttonColumn}>

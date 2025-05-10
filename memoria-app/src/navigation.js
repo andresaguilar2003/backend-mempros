@@ -57,7 +57,7 @@ function AppNavigator() {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: "Registrarse" }} />
           <Stack.Screen name="TherapistDashboardScreen" component={TherapistDashboardScreen} options={{ title: "Pacientes" }} />
           <Stack.Screen name="PatientReportScreen" component={PatientReportScreen} options={{ title: "PMCQ" }} />
-          <Stack.Screen name="PatientReportsList" component={PatientReportsListScreen} noptions={{ title: "Informes del Paciente" }} />
+          <Stack.Screen name="PatientReportsList" component={PatientReportsListScreen} options={{ title: "Informes del Paciente" }} />
           <Stack.Screen name="ColorChallengeReport" component={ColorChallengeReportScreen} options={{ title: "Reto de Colores" }}/>
           <Stack.Screen name="ReflexionPuzzleReport" component={ReflexionPuzzleReportScreen} options={{ title: "Desafío de Piezas y Respuestas" }} />
           <Stack.Screen name="NinjaChallengeReport" component={NinjaChallengeReportScreen} options={{ title: "Desafío Ninja" }} />
