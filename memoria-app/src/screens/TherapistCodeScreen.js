@@ -75,7 +75,7 @@ export default function TherapistCodeScreen() {
             <Icon name="verified-user" size={28} color="#5E35B1" />
             <Text style={styles.title}>Acceso Terapéutico</Text>
             <Text style={styles.subtitle}>
-              Introduce el código compartido por tu profesional de salud mental
+              Introduzca su código
             </Text>
           </View>
 

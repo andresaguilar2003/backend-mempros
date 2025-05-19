@@ -21,6 +21,8 @@ export default function HomeScreen() {
     const [showPuzzleInfoModal, setShowPuzzleInfoModal] = useState(false);
     const [showDesafioInfoModal, setShowDesafioInfoModal] = useState(false);
     const [showCaminoInfoModal, setShowCaminoInfoModal] = useState(false);
+    const [showMemoryGameModal, setShowMemoryGameModal] = useState(false);
+    const [showCriteriaGameModal, setShowCriteriaGameModal] = useState(false);
 
 
     const { hasCompletedPMCQ } = usePMCQ();
@@ -177,9 +179,10 @@ export default function HomeScreen() {
                             <View style={styles.modalContainer}>
                                 <Text style={styles.modalTitle}>Selecciona un juego</Text>
                                 <View style={styles.modalGameGrid}>
+                                    {/* Dentro del Modal showGamesModal */}
                                     <TouchableOpacity onPress={() => {
                                         setShowGamesModal(false);
-                                        navigation.navigate('JuegoMemoria');
+                                        setShowMemoryGameModal(true); // Mostrar modal explicativo primero
                                     }}>
                                         <Image
                                             source={require('../assests/memory-game.png')}
@@ -191,7 +194,7 @@ export default function HomeScreen() {
 
                                     <TouchableOpacity onPress={() => {
                                         setShowGamesModal(false);
-                                        navigation.navigate('CambioCriterio');
+                                        setShowCriteriaGameModal(true); // Mostrar modal explicativo primero
                                     }}>
                                         <Image
                                             source={require('../assests/cambio-criterio.png')}
@@ -207,6 +210,68 @@ export default function HomeScreen() {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                    </Modal>
+                    {/* Modal para Juego de Memoria (Cartas/Parejas) */}
+                    <Modal visible={showMemoryGameModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                        <Text style={styles.modalDescription}>
+                            🔸 Qué es: Es un clásico juego de memoria donde debes encontrar parejas de cartas iguales.{"\n\n"}
+                            🔸 Funcionamiento: Se muestran cartas boca abajo. Debes voltear dos a la vez para encontrar parejas. Si coinciden, permanecen visibles. El objetivo es encontrar todas las parejas en el menor tiempo posible.
+                        </Text>
+                        
+                        <TouchableOpacity 
+                            style={styles.playButton} 
+                            onPress={() => {
+                            setShowMemoryGameModal(false);
+                            navigation.navigate('JuegoMemoria');
+                            }}
+                        >
+                            <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                            onPress={() => setShowMemoryGameModal(false)} 
+                            style={styles.backArrow}
+                        >
+                            <Text style={styles.backArrowText}>←</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
+                    </Modal>
+
+                    {/* Modal para Cambio de Criterio (Figuras/Colores) */}
+                    <Modal visible={showCriteriaGameModal} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>¿Cómo se juega?</Text>
+                        <Text style={styles.modalDescription}>
+                            🔸 Qué es: Juego de atención y flexibilidad cognitiva donde debes cambiar tu criterio de selección.{"\n\n"}
+                            🔸 Funcionamiento: Primero verás una figura con un color específico. Luego se te mostrarán varias figuras y deberás seleccionar:
+                            {"\n"}• En algunos niveles las que tienen la MISMA FORMA
+                            {"\n"}• En otros niveles las que tienen el MISMO COLOR
+                            {"\n\n"}¡Debes estar atento porque el criterio puede cambiar!
+                        </Text>
+
+                        <TouchableOpacity 
+                            style={styles.playButton} 
+                            onPress={() => {
+                            setShowCriteriaGameModal(false);
+                            navigation.navigate('CambioCriterio');
+                            }}
+                        >
+                            <Text style={styles.playButtonText}>🎮 Jugar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                            onPress={() => setShowCriteriaGameModal(false)} 
+                            style={styles.backArrow}
+                        >
+                            <Text style={styles.backArrowText}>←</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
                     </Modal>
                     <Modal visible={showEvaluablesModal} transparent animationType="slide">
                     <View style={styles.modalOverlay}>
