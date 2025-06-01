@@ -21,7 +21,7 @@ export default function TherapistDashboardScreen({ route }) {
 
   const fetchPatients = async () => {
     try {
-      const res = await fetch(`http://192.168.1.19:5000/api/therapists/${therapist._id}/patients`);
+      const res = await fetch(`https://backend-mempros.onrender.com/api/therapists/${therapist._id}/patients`);
       const data = await res.json();
       setPatients(data.users || []);
     } catch (error) {

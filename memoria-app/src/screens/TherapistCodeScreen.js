@@ -35,7 +35,7 @@ export default function TherapistCodeScreen() {
     try {
       setLoading(true);
       setSearchPerformed(true);
-      const response = await fetch(`http://192.168.1.19:5000/api/therapists/by-code/${code}`);
+      const response = await fetch(`https://backend-mempros.onrender.com/api/therapists/by-code/${code}`);
       const data = await response.json();
 
       if (!response.ok) {

@@ -9,7 +9,7 @@ export default function NinjaChallengeReportScreen({ route }) {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch(`http://192.168.1.19:5000/api/ninja-challenge/user/${patientId}`);
+        const response = await fetch(`https://backend-mempros.onrender.com/api/ninja-challenge/user/${patientId}`);
         if (!response.ok) throw new Error('No se encontraron resultados.');
         const data = await response.json();
         // Ordenar por fecha descendente

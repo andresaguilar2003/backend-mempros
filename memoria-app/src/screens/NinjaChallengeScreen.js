@@ -195,7 +195,7 @@ const NinjaChallengeScreen = ({ navigation }) => {
 
   const saveResults = async (finalResults) => {
     try {
-      const res = await fetch("http://192.168.1.19:5000/api/ninja-challenge/save", {
+      const res = await fetch("https://backend-mempros.onrender.com/api/ninja-challenge/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

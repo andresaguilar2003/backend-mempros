@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL base igual a la de tus logros
-const API = 'http://192.168.1.19:5000/api/pmcq';
+const API = 'https://backend-mempros.onrender.com/api/pmcq';
 
 // Puedes recibir el token desde el contexto o como parámetro si hace falta
 export const checkIfPMCQCompleted = async (token) => {

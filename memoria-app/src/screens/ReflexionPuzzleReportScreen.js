@@ -9,7 +9,7 @@ export default function ReflectionPuzzleReportScreen({ route }) {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch(`http://192.168.1.19:5000/api/reflection-puzzle/user/${patientId}`);
+        const response = await fetch(`https://backend-mempros.onrender.com/api/reflection-puzzle/user/${patientId}`);
         if (!response.ok) throw new Error("No se encontraron resultados.");
         const data = await response.json();
         setResults(data);

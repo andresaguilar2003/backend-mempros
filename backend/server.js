@@ -98,7 +98,7 @@ function getLocalIP() {
 // Importar el script de notificaciones
 require('./services/notifications'); // Asegúrate de que el archivo notifications.js esté en la raíz
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 const LOCAL_IP = getLocalIP();
 
 // Escuchar en 0.0.0.0 para permitir conexiones en la red

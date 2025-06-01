@@ -12,7 +12,7 @@ export default function UsageScreen() {
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const response = await fetch('http://192.168.1.19:5000/api/usage/get', {
+        const response = await fetch('https://backend-mempros.onrender.com/api/usage/get', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,

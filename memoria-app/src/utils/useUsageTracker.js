@@ -11,7 +11,7 @@ const useUsageTracker = (token) => {
     const startTracking = () => {
       intervalRef.current = setInterval(async () => {
         try {
-          const res = await fetch('http://192.168.1.19:5000/api/usage/update', {
+          const res = await fetch('https://backend-mempros.onrender.com/api/usage/update', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

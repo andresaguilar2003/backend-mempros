@@ -48,7 +48,7 @@ export default function AddTaskScreen({ route }) {
         console.log("📩 Datos enviados al backend:", newTask); // Verifica que el userId esté incluido
 
         try {
-            const response = await fetch('http://192.168.1.19:5000/api/tasks', {
+            const response = await fetch('https://backend-mempros.onrender.com/api/tasks', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export default function AddTaskScreen({ route }) {
 
             try {
               // Llamar al endpoint /check para verificar logros nuevos
-              const checkResponse = await fetch('http://192.168.1.19:5000/api/achievements/check', {
+              const checkResponse = await fetch('https://backend-mempros.onrender.com/api/achievements/check', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

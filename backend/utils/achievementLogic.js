@@ -7,7 +7,7 @@ export const checkForAchievementUnlock = async ({ userId, token, tasks, onUnlock
     const hasCompletedTen = tasks.filter(t => t.status === "completada").length >= 10;
 
     // Pide los logros desbloqueados
-    const unlockedRes = await axios.get("http://192.168.1.19:5000/api/achievements/unlocked", {
+    const unlockedRes = await axios.get("https://backend-mempros.onrender.com/api/achievements/unlocked", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -15,7 +15,7 @@ export const checkForAchievementUnlock = async ({ userId, token, tasks, onUnlock
 
     const unlock = async (achievementId) => {
       const res = await axios.post(
-        "http://192.168.1.19:5000/api/achievements/unlock",
+        "https://backend-mempros.onrender.com/api/achievements/unlock",
         { achievementId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

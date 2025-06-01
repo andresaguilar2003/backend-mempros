@@ -9,7 +9,7 @@ export default function ColorChallengeReportScreen({ route }) {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch(`http://192.168.1.19:5000/api/color-challenge/user/${patientId}`);
+        const response = await fetch(`https://backend-mempros.onrender.com/api/color-challenge/user/${patientId}`);
         if (!response.ok) throw new Error("No se encontraron resultados.");
         const data = await response.json();
         const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));

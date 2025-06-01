@@ -16,7 +16,7 @@ export default function PatientReportScreen({ route }) {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await fetch(`http://192.168.1.19:5000/api/pmcq/result/${patientId}`);
+        const response = await fetch(`https://backend-mempros.onrender.com/api/pmcq/result/${patientId}`);
         if (!response.ok) throw new Error("Informe no encontrado");
         const data = await response.json();
         setReport(data);

@@ -24,7 +24,7 @@ const KanbanScreen = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch("http://192.168.1.19:5000/api/tasks", {
+      const response = await fetch("https://backend-mempros.onrender.com/api/tasks", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,7 +44,7 @@ const KanbanScreen = () => {
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
       const task = tasks.find((t) => t._id === taskId);
-      await fetch(`http://192.168.1.19:5000/api/tasks/${taskId}`, {
+      await fetch(`https://backend-mempros.onrender.com/api/tasks/${taskId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const KanbanScreen = () => {
 
   const deleteTask = async (taskId) => {
     try {
-      await fetch(`http://192.168.1.19:5000/api/tasks/${taskId}`, {
+      await fetch(`https://backend-mempros.onrender.com/api/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ const KanbanScreen = () => {
 
   const updateTaskDateTime = async () => {
     try {
-      await fetch(`http://192.168.1.19:5000/api/tasks/${selectedTask._id}`, {
+      await fetch(`https://backend-mempros.onrender.com/api/tasks/${selectedTask._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

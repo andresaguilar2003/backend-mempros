@@ -10,7 +10,7 @@ export default function DailyUsageReportScreen({ route }) {
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const response = await fetch(`http://192.168.1.19:5000/api/usage/history/${patientId}`);
+        const response = await fetch(`https://backend-mempros.onrender.com/api/usage/history/${patientId}`);
         if (!response.ok) throw new Error('No se encontró historial');
         const data = await response.json();
         setUsage(data);

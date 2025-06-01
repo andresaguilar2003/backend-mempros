@@ -83,7 +83,7 @@ const ColorChallengeScreen = () => {
 
   const endGame = async (completed = false) => {
     try {
-      const response = await fetch('http://192.168.1.19:5000/api/color-challenge/save', {
+      const response = await fetch('https://backend-mempros.onrender.com/api/color-challenge/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

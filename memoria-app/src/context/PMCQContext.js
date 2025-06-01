@@ -29,7 +29,7 @@ export const PMCQProvider = ({ children }) => {
   const submitPMCQ = async (data) => {
     try {
         const response = await axios.post(
-            'http://192.168.1.19:5000/api/pmcq/submit', // ← CORREGIDO
+            'https://backend-mempros.onrender.com/api/pmcq/submit', // ← CORREGIDO
             data,
             {
               headers: {

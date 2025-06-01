@@ -13,10 +13,10 @@ const AchievementsScreen = () => {
     const fetchAchievements = async () => {
       try {
         const [allRes, unlockedRes] = await Promise.all([
-          axios.get("http://192.168.1.19:5000/api/achievements/all", {
+          axios.get("https://backend-mempros.onrender.com/api/achievements/all", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://192.168.1.19:5000/api/achievements/my", {
+          axios.get("https://backend-mempros.onrender.com/api/achievements/my", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
